@@ -16,7 +16,7 @@ const STUDIO_CONFIG = {
     "currentWeek": 1,
     "cw1Deadline": "2026-07-03",
     "cw2Deadline": "2026-08-21",
-    "adminPassword": "CMP701@Studio2026",
+    "mlPassword": "CMP701@Studio2026",
     "version": "1.0.0",
     "lastUpdated": "2026-06-01"
   },
@@ -24,7 +24,7 @@ const STUDIO_CONFIG = {
     {
       "name": "Tertsegha Anande",
       "pin": "TA2601",
-      "role": "admin",
+      "role": "moduleleader",
       "groups": [
         "BHM-A",
         "BHM-B",
@@ -1377,7 +1377,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .container{max-width:900px;margin:0 auto;padding:16px}
 .card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
 .card-title{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
-.login-screen{position:fixed;inset:0;background:rgba(15,23,42,.9);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.ml-screen{position:fixed;inset:0;background:rgba(15,23,42,.9);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-box{background:#fff;border-radius:14px;padding:28px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
 .login-box h2{font-size:18px;color:var(--navy);margin-bottom:8px}
 .field{margin-bottom:12px;text-align:left}
@@ -1418,12 +1418,12 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 <body>
 
 <!-- ── Login screen ──────────────────────────────────────────────────────── -->
-<div id="login-screen" class="login-screen">
+<div id="ml-screen" class="ml-screen">
   <div class="login-box">
     <div style="font-size:36px;margin-bottom:12px">👩‍🏫</div>
     <h2>Tutor Access</h2>
     <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Enter your name and PIN to view your seminar groups.</p>
-    <div id="login-error" style="display:none" class="alert" style="background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d;text-align:left"></div>
+    <div id="ml-error" style="display:none" class="alert" style="background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d;text-align:left"></div>
     <div class="field">
       <label>Your Name</label>
       <select id="tutor-sel">
@@ -1432,9 +1432,9 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     </div>
     <div class="field">
       <label>PIN</label>
-      <input type="password" id="pin-input" placeholder="Enter your PIN" onkeydown="if(event.key==='Enter')doLogin()">
+      <input type="password" id="pin-input" placeholder="Enter your PIN" onkeydown="if(event.key==='Enter')mlSignIn()">
     </div>
-    <button class="btn btn-teal btn-full" onclick="doLogin()">Sign In</button>
+    <button class="btn btn-teal btn-full" onclick="mlSignIn()">Sign In</button>
   </div>
 </div>
 
@@ -1447,7 +1447,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
     </div>
     <div style="display:flex;gap:8px;align-items:center">
       <span id="week-badge" style="background:var(--amber);color:#1e293b;font-weight:700;font-size:11px;padding:4px 10px;border-radius:12px"></span>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Log out</button>
+      <button class="btn btn-ghost btn-sm" onclick="mlSignOut()">Log out</button>
       <a href="index.html" class="btn btn-ghost btn-sm">Student View</a>
     </div>
   </div>
@@ -1520,28 +1520,28 @@ window.addEventListener('DOMContentLoaded', () => {
   const saved = sessionStorage.getItem('cmp701_tutor');
   if (saved) {
     currentTutor = JSON.parse(saved);
-    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('ml-screen').style.display = 'none';
     initTutor();
   }
 });
 
-function doLogin() {
+function mlSignIn() {
   const name = document.getElementById('tutor-sel').value;
   const pin = document.getElementById('pin-input').value;
   const tutor = C.tutors.find(t => t.name === name && t.pin === pin);
-  const errEl = document.getElementById('login-error');
+  const errEl = document.getElementById('ml-error');
   if (!name) { errEl.textContent = 'Select your name.'; errEl.style.display='block'; return; }
   if (tutor) {
     currentTutor = tutor;
     sessionStorage.setItem('cmp701_tutor', JSON.stringify(tutor));
-    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('ml-screen').style.display = 'none';
     initTutor();
   } else {
     errEl.textContent = 'Incorrect PIN. Contact the Module Leader if locked out.';
     errEl.style.display = 'block';
   }
 }
-function doLogout() { sessionStorage.removeItem('cmp701_tutor'); location.reload(); }
+function mlSignOut() { sessionStorage.removeItem('cmp701_tutor'); location.reload(); }
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 function initTutor() {

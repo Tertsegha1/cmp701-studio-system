@@ -17,9 +17,9 @@ const STUDIO_CONFIG = {
     currentWeek: 1,
     cw1Deadline: "2026-07-03",   // Friday end of Week 5 — confirm with registry
     cw2Deadline: "2026-08-21",   // Friday end of Week 12 — confirm with registry
-    // SHA-256 hash of admin password. Default: CMP701@Studio2026
-    // Run admin.html > Setup tab to generate a new hash after changing password.
-    adminPassword: "CMP701@Studio2026",
+    // SHA-256 hash of Module Leader passcode. Default: CMP701@Studio2026
+    // Run moduleleader.html > Setup tab to generate a new hash after changing password.
+    mlPassword: "CMP701@Studio2026",
     version: "1.0.0",
     lastUpdated: "2026-06-01",
   },
@@ -27,7 +27,7 @@ const STUDIO_CONFIG = {
   // ── Tutor access (PIN-based) ─────────────────────────────────────────────
   // Each tutor sees only their assigned seminar groups.
   tutors: [
-    { name: "Tertsegha Anande",  pin: "TA2601", role: "admin",  groups: ["BHM-A","BHM-B","BHM-E"] },
+    { name: "Tertsegha Anande",  pin: "TA2601", role: "moduleleader",  groups: ["BHM-A","BHM-B","BHM-E"] },
     { name: "John Omokore",      pin: "JO2602", role: "tutor",  groups: ["LDN-A","LDN-CD"] },
     { name: "Parvez Jugon",      pin: "PJ2603", role: "tutor",  groups: ["LDN-CD"] },
     { name: "Goodluck Oguzie",   pin: "GO2604", role: "tutor",  groups: ["BHM-B"] },

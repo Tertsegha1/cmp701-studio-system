@@ -11,7 +11,7 @@ A web-based, gamified, collaborative studio system for CMP701 Digital Transforma
 | File | Purpose | Audience |
 |------|---------|----------|
 | `index.html` | Student dashboard — quest briefs, leaderboard, XP, badges | Students (via Blackboard) |
-| `admin.html` | Admin panel — week updates, XP, BB links, export config | Module Leader only |
+| `moduleleader.html` | Admin panel — week updates, XP, BB links, export config | Module Leader only |
 | `tutor.html` | Tutor view — guild overview, XP report builder | Tutors (PIN access) |
 | `config.js` | Central data source — updated weekly and redeployed | Edited by scripts |
 | `scripts/update_week.py` | CLI weekly update tool | Module Leader |
@@ -29,8 +29,8 @@ python scripts/update_week.py
 Follow the prompts: advance week → enter XP → update links → save → deploy.
 
 ### Option B: Admin panel (browser-based)
-1. Open `admin.html` in a browser
-2. Log in with admin password (default: `CMP701@Studio2026`)
+1. Open `moduleleader.html` in a browser
+2. Log in with Module Leader passcode (default: `CMP701@Studio2026`)
 3. **Week Update tab** → advance week number
 4. **XP Manager tab** → enter XP per guild per seminar group
 5. **BB Links tab** → paste this week's Blackboard URLs
@@ -47,11 +47,11 @@ Follow the prompts: advance week → enter XP → update links → save → depl
 2. Click **"+"** → **"Create"** → **"Folder"** → name it `Studio System`
 3. Inside the folder, click **"+"** → **"Upload"** and upload all 4 files:
    - `index.html`
-   - `admin.html`
+   - `moduleleader.html`
    - `tutor.html`
    - `config.js`
 4. For `index.html`: click the three-dot menu → **"Edit"** → toggle **"Visible to students"** → **On**
-5. For `admin.html` and `tutor.html`: keep **"Visible to students"** → **Off** (staff only)
+5. For `moduleleader.html` and `tutor.html`: keep **"Visible to students"** → **Off** (staff only)
 6. Copy the URL of `index.html` from Blackboard
 
 ### Embedding in the course menu (recommended)
@@ -123,12 +123,12 @@ Or simply add a portfolio entry linking to the GitHub repo:
 
 | Role | Access | How |
 |------|--------|-----|
-| **Module Leader (Admin)** | Full — all tabs in `admin.html` | Admin password (SHA-256 hashed in config.js) |
+| **Module Leader** | Full — all tabs in `moduleleader.html` | Admin password (SHA-256 hashed in config.js) |
 | **Tutors** | `tutor.html` — own seminar groups only | PIN (set in config.js > tutors array) |
 | **Students** | `index.html` — own guild view + leaderboard filtered to own group | Guild selector (saved in browser localStorage) |
 
 ### Default credentials
-- **Admin password**: `CMP701@Studio2026` — **change this immediately** via admin.html > Setup tab
+- **Admin password**: `CMP701@Studio2026` — **change this immediately** via moduleleader.html > Setup tab
 - **Tutor PINs**: See `config.js > tutors` array (e.g. `TA2601`, `JO2602`, etc.)
 
 ---

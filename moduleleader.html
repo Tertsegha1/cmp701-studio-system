@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CMP701 Studio — Admin Panel</title>
+<title>CMP701 Studio — Module Leader Panel</title>
 <script>
 const STUDIO_CONFIG = {
   "meta": {
@@ -16,7 +16,7 @@ const STUDIO_CONFIG = {
     "currentWeek": 1,
     "cw1Deadline": "2026-07-03",
     "cw2Deadline": "2026-08-21",
-    "adminPassword": "CMP701@Studio2026",
+    "mlPassword": "CMP701@Studio2026",
     "version": "1.0.0",
     "lastUpdated": "2026-06-01"
   },
@@ -24,7 +24,7 @@ const STUDIO_CONFIG = {
     {
       "name": "Tertsegha Anande",
       "pin": "TA2601",
-      "role": "admin",
+      "role": "moduleleader",
       "groups": [
         "BHM-A",
         "BHM-B",
@@ -1415,7 +1415,7 @@ body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--te
 .badge-green{background:#d1fae5;color:#065f46}
 .badge-amber{background:#fef3c7;color:#92400e}
 /* Login screen */
-.login-screen{position:fixed;inset:0;background:rgba(15,23,42,.9);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.ml-screen{position:fixed;inset:0;background:rgba(15,23,42,.9);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-box{background:#fff;border-radius:14px;padding:32px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);text-align:center}
 .login-box h2{font-size:20px;color:var(--navy);margin-bottom:8px}
 .login-box p{color:var(--muted);font-size:13px;margin-bottom:20px}
@@ -1449,17 +1449,17 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
 <body>
 
 <!-- ── Login screen ──────────────────────────────────────────────────────── -->
-<div id="login-screen" class="login-screen">
+<div id="ml-screen" class="ml-screen">
   <div class="login-box">
     <div style="font-size:36px;margin-bottom:12px">🔐</div>
-    <h2>Admin Panel</h2>
+    <h2>Module Leader Panel</h2>
     <p>CMP701 Digital Transformation Studio<br>Module Leader access only</p>
-    <div id="login-error" class="alert alert-red" style="display:none;text-align:left"></div>
+    <div id="ml-error" class="alert alert-red" style="display:none;text-align:left"></div>
     <div class="field" style="text-align:left">
-      <label>Admin Password</label>
-      <input type="password" id="pw-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+      <label>Module Leader Passcode</label>
+      <input type="password" id="ml-input" placeholder="Enter Module Leader passcode" onkeydown="if(event.key==='Enter')mlSignIn()">
     </div>
-    <button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
+    <button class="btn btn-primary btn-full" onclick="mlSignIn()">Sign In</button>
     <div style="margin-top:14px;font-size:11px;color:var(--muted)">
       First time? Default password hint: <code>CMP701@Studio2026</code><br>
       Go to <strong>Setup</strong> tab after login to change it.
@@ -1471,12 +1471,12 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
 <div class="header">
   <div class="header-inner">
     <div>
-      <div class="header h1" style="font-size:15px;font-weight:700;color:#fff">CMP701 Studio — Admin Panel</div>
+      <div class="header h1" style="font-size:15px;font-weight:700;color:#fff">CMP701 Studio — Module Leader Panel</div>
       <div class="sub">Module Leader: Dr Tertsegha Anande &nbsp;·&nbsp; Ulster University QAHE</div>
     </div>
     <div style="display:flex;gap:8px;align-items:center">
-      <span id="admin-week-display" style="background:var(--amber);color:#1e293b;font-weight:700;font-size:12px;padding:4px 10px;border-radius:12px"></span>
-      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Log out</button>
+      <span id="ml-week-display" style="background:var(--amber);color:#1e293b;font-weight:700;font-size:12px;padding:4px 10px;border-radius:12px"></span>
+      <button class="btn btn-ghost btn-sm" onclick="mlSignOut()">Log out</button>
       <a href="index.html" class="btn btn-ghost btn-sm">Student View</a>
     </div>
   </div>
@@ -1611,14 +1611,14 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
         <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Download standalone files:</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
           <a id="dl-index"  class="btn btn-green"  download="index.html">⬇ index.html — Student Dashboard</a>
-          <a id="dl-admin"  class="btn btn-amber"  download="admin.html">⬇ admin.html — Admin Panel</a>
+          <a id="dl-admin"  class="btn btn-amber"  download="moduleleader.html">⬇ moduleleader.html — Module Leader Panel</a>
           <a id="dl-tutor"  class="btn btn-teal"   download="tutor.html">⬇ tutor.html — Tutor View</a>
         </div>
         <div class="alert alert-success" style="margin-top:14px;font-size:12px">
           <strong>Blackboard upload steps (each Monday):</strong><br>
           1. In your Blackboard Ultra course → Course Files → studio-system folder<br>
           2. Select the old <code>index.html</code> → Replace File → upload new <code>index.html</code><br>
-          3. First time only: also replace <code>admin.html</code> and <code>tutor.html</code><br>
+          3. First time only: also replace <code>moduleleader.html</code> and <code>tutor.html</code><br>
           4. Students see the update immediately on next load — no cache issues
         </div>
       </div>
@@ -1649,19 +1649,19 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
   <!-- ── Tab: Setup ── -->
   <div class="tab-panel" id="tab-setup">
     <div class="card">
-      <div class="card-title">Change Admin Password</div>
+      <div class="card-title">Change Module Leader Passcode</div>
       <div class="alert alert-warn" style="margin-bottom:14px">
-        Set a new admin password below. Then click Export &rarr; Generate Blackboard Bundle and re-upload admin.html.
+        Set a new Module Leader passcode below. Then click Export &rarr; Generate Blackboard Bundle and re-upload moduleleader.html.
       </div>
       <div class="grid-2">
         <div>
-          <div class="field"><label>New Password</label><input type="password" id="new-pw"></div>
-          <div class="field"><label>Confirm Password</label><input type="password" id="confirm-pw"></div>
-          <button class="btn btn-primary" onclick="generatePasswordHash()">Set Password</button>
+          <div class="field"><label>New Password</label><input type="password" id="ml-new-pw"></div>
+          <div class="field"><label>Confirm Password</label><input type="password" id="ml-confirm-pw"></div>
+          <button class="btn btn-primary" onclick="generateNewPasscode()">Set Password</button>
         </div>
         <div>
           <div class="field"><label>New password (saved into config on export)</label>
-            <textarea id="pw-hash-output" readonly style="font-family:monospace;font-size:11px;min-height:60px" placeholder="Your new password will appear here…"></textarea>
+            <textarea id="ml-pw-output" readonly style="font-family:monospace;font-size:11px;min-height:60px" placeholder="Your new password will appear here…"></textarea>
           </div>
         </div>
       </div>
@@ -1690,25 +1690,25 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
 </div>
 
 <script>
-// adminConfig is initialised lazily inside initAdmin() to avoid
+// mlConfig is initialised lazily inside initAdmin() to avoid
 // a large JSON.parse/stringify blocking the login screen.
-let adminConfig = null;
+let mlConfig = null;
 let activeGroup = null;
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
-function doLogin() {
+function mlSignIn() {
   try {
-    const pw = (document.getElementById('pw-input').value || '').trim();
+    const pw = (document.getElementById('ml-input').value || '').trim();
     if (!pw) return;
     // Read password directly from the global STUDIO_CONFIG — no deep-copy needed here
-    const stored = (window.STUDIO_CONFIG && window.STUDIO_CONFIG.meta && window.STUDIO_CONFIG.meta.adminPassword)
+    const stored = (window.STUDIO_CONFIG && window.STUDIO_CONFIG.meta && window.STUDIO_CONFIG.meta.mlPassword)
       || 'CMP701@Studio2026';
     if (pw === stored) {
-      sessionStorage.setItem('cmp701_admin', '1');
-      document.getElementById('login-screen').style.display = 'none';
+      sessionStorage.setItem('cmp701_ml', '1');
+      document.getElementById('ml-screen').style.display = 'none';
       initAdmin();
     } else {
-      const errEl = document.getElementById('login-error');
+      const errEl = document.getElementById('ml-error');
       errEl.style.cssText = 'display:block;background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;text-align:left';
       errEl.textContent = 'Incorrect password. Contact the Module Leader if locked out.';
     }
@@ -1717,45 +1717,45 @@ function doLogin() {
   }
 }
 
-function doLogout() {
-  sessionStorage.removeItem('cmp701_admin');
+function mlSignOut() {
+  sessionStorage.removeItem('cmp701_ml');
   location.reload();
 }
 
 window.addEventListener('DOMContentLoaded', () => {
-  if (sessionStorage.getItem('cmp701_admin')) {
-    document.getElementById('login-screen').style.display = 'none';
+  if (sessionStorage.getItem('cmp701_ml')) {
+    document.getElementById('ml-screen').style.display = 'none';
     initAdmin();
   }
   // Enter key on password
-  document.getElementById('pw-input').addEventListener('keydown', e => {
-    if (e.key === 'Enter') doLogin();
+  document.getElementById('ml-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') mlSignIn();
   });
 });
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 function initAdmin() {
   // Create deep working copy here (after login) so it never blocks the login screen
-  if (!adminConfig) {
-    adminConfig = JSON.parse(JSON.stringify(window.STUDIO_CONFIG));
+  if (!mlConfig) {
+    mlConfig = JSON.parse(JSON.stringify(window.STUDIO_CONFIG));
   }
-  const week = adminConfig.meta.currentWeek;
-  const wData = adminConfig.weeks[week - 1];
-  document.getElementById('admin-week-display').textContent = `Week ${week}: ${wData.title}`;
+  const week = mlConfig.meta.currentWeek;
+  const wData = mlConfig.weeks[week - 1];
+  document.getElementById('ml-week-display').textContent = `Week ${week}: ${wData.title}`;
   document.getElementById('s-week').textContent = week;
   document.getElementById('s-phase').textContent = wData.assessmentPhase;
 
   // Week tab
   document.getElementById('cur-week').value = week;
-  document.getElementById('cw1-date').value = adminConfig.meta.cw1Deadline;
-  document.getElementById('cw2-date').value = adminConfig.meta.cw2Deadline;
-  document.getElementById('last-updated').value = adminConfig.meta.lastUpdated;
+  document.getElementById('cw1-date').value = mlConfig.meta.cw1Deadline;
+  document.getElementById('cw2-date').value = mlConfig.meta.cw2Deadline;
+  document.getElementById('last-updated').value = mlConfig.meta.lastUpdated;
   updateWeekPreview();
   document.getElementById('cur-week').addEventListener('input', updateWeekPreview);
 
   // XP tab
   renderXPGroupButtons();
-  activeGroup = Object.keys(adminConfig.seminarGroups)[0];
+  activeGroup = Object.keys(mlConfig.seminarGroups)[0];
   renderXPTable();
 
   // BB Links tab
@@ -1772,7 +1772,7 @@ function initAdmin() {
 function updateWeekPreview() {
   const w = parseInt(document.getElementById('cur-week').value);
   if (w < 1 || w > 12) return;
-  const wData = adminConfig.weeks[w-1];
+  const wData = mlConfig.weeks[w-1];
   document.getElementById('week-preview').innerHTML = `
     <strong>Week ${w}: ${wData.title}</strong><br>
     Phase: ${wData.phase} &nbsp;·&nbsp; Assessment: ${wData.assessmentPhase}<br>
@@ -1784,7 +1784,7 @@ function updateWeekPreview() {
 // ── XP Manager ───────────────────────────────────────────────────────────────
 function renderXPGroupButtons() {
   const cont = document.getElementById('xp-group-selector');
-  cont.innerHTML = Object.entries(adminConfig.seminarGroups).map(([key,sg]) =>
+  cont.innerHTML = Object.entries(mlConfig.seminarGroups).map(([key,sg]) =>
     `<button class="btn btn-sm btn-ghost" id="xpbtn-${key}" onclick="setXPGroup('${key}')">${sg.label}</button>`
   ).join('');
 }
@@ -1798,9 +1798,9 @@ function setXPGroup(key) {
 }
 
 function renderXPTable() {
-  const sg = adminConfig.seminarGroups[activeGroup];
-  const guilds = adminConfig.guilds.filter(g => g.group === activeGroup);
-  const week = adminConfig.meta.currentWeek;
+  const sg = mlConfig.seminarGroups[activeGroup];
+  const guilds = mlConfig.guilds.filter(g => g.group === activeGroup);
+  const week = mlConfig.meta.currentWeek;
 
   // Highlight active button
   document.querySelectorAll('[id^=xpbtn-]').forEach(b => {
@@ -1854,8 +1854,8 @@ function setQuickXP(guildId, val, week) {
 }
 
 function applyXP() {
-  const week = adminConfig.meta.currentWeek;
-  adminConfig.guilds.forEach(g => {
+  const week = mlConfig.meta.currentWeek;
+  mlConfig.guilds.forEach(g => {
     const el = document.getElementById(`xp-w${week}-${g.id}`);
     if (el) {
       const weekVal = Math.min(110, Math.max(0, parseInt(el.value) || 0));
@@ -1870,10 +1870,10 @@ function applyXP() {
 
 // ── BB Links ─────────────────────────────────────────────────────────────────
 function renderBBLinksForm() {
-  document.getElementById('bb-gradebook').value = adminConfig.bbLinks.gradebook || '';
+  document.getElementById('bb-gradebook').value = mlConfig.bbLinks.gradebook || '';
   const cont = document.getElementById('bb-links-container');
-  cont.innerHTML = Object.entries(adminConfig.seminarGroups).map(([key,sg]) => {
-    const links = adminConfig.bbLinks[key] || {};
+  cont.innerHTML = Object.entries(mlConfig.seminarGroups).map(([key,sg]) => {
+    const links = mlConfig.bbLinks[key] || {};
     const workspaceInputs = Object.keys(links.guildWorkspaces || {}).map(gid =>
       `<div class="field" style="margin-bottom:8px">
         <label style="font-size:10px">${gid} workspace</label>
@@ -1904,14 +1904,14 @@ function renderBBLinksForm() {
 }
 
 function applyBBLinks() {
-  adminConfig.bbLinks.gradebook = document.getElementById('bb-gradebook').value.trim();
-  Object.keys(adminConfig.seminarGroups).forEach(key => {
-    if (!adminConfig.bbLinks[key]) adminConfig.bbLinks[key] = { currentAssignment:'', peerReviewForm:'', guildWorkspaces:{} };
-    adminConfig.bbLinks[key].currentAssignment = (document.getElementById(`bb-assign-${key}`) || {}).value?.trim() || '';
-    adminConfig.bbLinks[key].peerReviewForm    = (document.getElementById(`bb-peer-${key}`) || {}).value?.trim() || '';
-    const wsKeys = Object.keys(adminConfig.bbLinks[key].guildWorkspaces || {});
+  mlConfig.bbLinks.gradebook = document.getElementById('bb-gradebook').value.trim();
+  Object.keys(mlConfig.seminarGroups).forEach(key => {
+    if (!mlConfig.bbLinks[key]) mlConfig.bbLinks[key] = { currentAssignment:'', peerReviewForm:'', guildWorkspaces:{} };
+    mlConfig.bbLinks[key].currentAssignment = (document.getElementById(`bb-assign-${key}`) || {}).value?.trim() || '';
+    mlConfig.bbLinks[key].peerReviewForm    = (document.getElementById(`bb-peer-${key}`) || {}).value?.trim() || '';
+    const wsKeys = Object.keys(mlConfig.bbLinks[key].guildWorkspaces || {});
     wsKeys.forEach(gid => {
-      adminConfig.bbLinks[key].guildWorkspaces[gid] = (document.getElementById(`ws-${gid}`) || {}).value?.trim() || '';
+      mlConfig.bbLinks[key].guildWorkspaces[gid] = (document.getElementById(`ws-${gid}`) || {}).value?.trim() || '';
     });
   });
   showToast('Links saved. Export config.js to deploy.');
@@ -1920,8 +1920,8 @@ function applyBBLinks() {
 // ── Cohort table ─────────────────────────────────────────────────────────────
 function renderCohortTable() {
   const tbody = document.getElementById('cohort-tbody');
-  tbody.innerHTML = Object.entries(adminConfig.seminarGroups).map(([key,sg]) => {
-    const guilds = adminConfig.guilds.filter(g => g.group === key).sort((a,b)=>b.xp-a.xp);
+  tbody.innerHTML = Object.entries(mlConfig.seminarGroups).map(([key,sg]) => {
+    const guilds = mlConfig.guilds.filter(g => g.group === key).sort((a,b)=>b.xp-a.xp);
     const leader = guilds[0];
     const campClass = key.startsWith('LDN')?'chip-ldn':key.startsWith('BHM')?'chip-bhm':'chip-man';
     return `<tr>
@@ -1940,41 +1940,41 @@ function renderCohortTable() {
 function renderTutorTable() {
   const t = document.getElementById('tutor-table');
   t.innerHTML = `<thead><tr><th>Name</th><th>PIN</th><th>Role</th><th>Assigned Groups</th></tr></thead>
-  <tbody>${adminConfig.tutors.map(t =>
+  <tbody>${mlConfig.tutors.map(t =>
     `<tr><td>${t.name}</td><td><code>${t.pin}</code></td><td>${t.role}</td><td>${t.groups.join(', ')}</td></tr>`
   ).join('')}</tbody>`;
 }
 
 function renderBadgeSelectors() {
   const gSel = document.getElementById('badge-guild-sel');
-  gSel.innerHTML = adminConfig.guilds.map(g => `<option value="${g.id}">${g.id}</option>`).join('');
+  gSel.innerHTML = mlConfig.guilds.map(g => `<option value="${g.id}">${g.id}</option>`).join('');
   const bSel = document.getElementById('badge-badge-sel');
-  bSel.innerHTML = adminConfig.badges.map(b => `<option value="${b.id}">${b.icon} ${b.label}</option>`).join('');
+  bSel.innerHTML = mlConfig.badges.map(b => `<option value="${b.id}">${b.icon} ${b.label}</option>`).join('');
 }
 
 function awardBadge() {
   const gId = document.getElementById('badge-guild-sel').value;
   const bId = document.getElementById('badge-badge-sel').value;
-  const guild = adminConfig.guilds.find(g => g.id === gId);
+  const guild = mlConfig.guilds.find(g => g.id === gId);
   if (!guild.badges.includes(bId)) { guild.badges.push(bId); showToast(`Badge awarded to ${gId}. Export config.js to deploy.`); }
   else showToast('Guild already has this badge.');
 }
 function revokeBadge() {
   const gId = document.getElementById('badge-guild-sel').value;
   const bId = document.getElementById('badge-badge-sel').value;
-  const guild = adminConfig.guilds.find(g => g.id === gId);
+  const guild = mlConfig.guilds.find(g => g.id === gId);
   guild.badges = guild.badges.filter(b => b !== bId);
   showToast(`Badge revoked from ${gId}.`);
 }
 
-function generatePasswordHash() {
-  const pw = document.getElementById('new-pw').value;
-  const cpw = document.getElementById('confirm-pw').value;
+function generateNewPasscode() {
+  const pw = document.getElementById('ml-new-pw').value;
+  const cpw = document.getElementById('ml-confirm-pw').value;
   if (!pw) { alert('Enter a password.'); return; }
   if (pw !== cpw) { alert('Passwords do not match.'); return; }
   if (pw.length < 8) { alert('Password must be at least 8 characters.'); return; }
-  document.getElementById('pw-hash-output').value = pw;
-  if (adminConfig && adminConfig.meta) adminConfig.meta.adminPassword = pw;
+  document.getElementById('ml-pw-output').value = pw;
+  if (mlConfig && mlConfig.meta) mlConfig.meta.mlPassword = pw;
   showToast('Password set. Export Blackboard Bundle to deploy.');
 }
 
@@ -1982,12 +1982,12 @@ function generatePasswordHash() {
 function applyWeekUpdate() {
   const w = parseInt(document.getElementById('cur-week').value);
   if (w < 1 || w > 12) { alert('Week must be 1–12.'); return; }
-  adminConfig.meta.currentWeek = w;
-  adminConfig.meta.cw1Deadline = document.getElementById('cw1-date').value;
-  adminConfig.meta.cw2Deadline = document.getElementById('cw2-date').value;
-  adminConfig.meta.lastUpdated = document.getElementById('last-updated').value || new Date().toISOString().slice(0,10);
-  const wData = adminConfig.weeks[w-1];
-  document.getElementById('admin-week-display').textContent = `Week ${w}: ${wData.title}`;
+  mlConfig.meta.currentWeek = w;
+  mlConfig.meta.cw1Deadline = document.getElementById('cw1-date').value;
+  mlConfig.meta.cw2Deadline = document.getElementById('cw2-date').value;
+  mlConfig.meta.lastUpdated = document.getElementById('last-updated').value || new Date().toISOString().slice(0,10);
+  const wData = mlConfig.weeks[w-1];
+  document.getElementById('ml-week-display').textContent = `Week ${w}: ${wData.title}`;
   document.getElementById('s-week').textContent = w;
   document.getElementById('s-phase').textContent = wData.assessmentPhase;
   renderXPTable();
@@ -2003,7 +2003,7 @@ async function generateBlackboardBundle() {
   btn.disabled = true;
   status.textContent = '⏳ Generating bundle…';
 
-  const configScript = `<script>\nconst STUDIO_CONFIG = ${JSON.stringify(adminConfig, null, 2)};\nif (typeof module !== 'undefined') module.exports = STUDIO_CONFIG;\n<\/script>`;
+  const configScript = `<script>\nconst STUDIO_CONFIG = ${JSON.stringify(mlConfig, null, 2)};\nif (typeof module !== 'undefined') module.exports = STUDIO_CONFIG;\n<\/script>`;
   const PLACEHOLDER = '<script>
 const STUDIO_CONFIG = {
   "meta": {
@@ -2016,7 +2016,7 @@ const STUDIO_CONFIG = {
     "currentWeek": 1,
     "cw1Deadline": "2026-07-03",
     "cw2Deadline": "2026-08-21",
-    "adminPassword": "CMP701@Studio2026",
+    "mlPassword": "CMP701@Studio2026",
     "version": "1.0.0",
     "lastUpdated": "2026-06-01"
   },
@@ -2024,7 +2024,7 @@ const STUDIO_CONFIG = {
     {
       "name": "Tertsegha Anande",
       "pin": "TA2601",
-      "role": "admin",
+      "role": "moduleleader",
       "groups": [
         "BHM-A",
         "BHM-B",
@@ -3371,7 +3371,7 @@ if (typeof module !== 'undefined') module.exports = STUDIO_CONFIG;
 
   const targets = [
     { file: 'index.html', dlId: 'dl-index' },
-    { file: 'admin.html', dlId: 'dl-admin' },
+    { file: 'moduleleader.html', dlId: 'dl-admin' },
     { file: 'tutor.html', dlId: 'dl-tutor' },
   ];
 
@@ -3409,11 +3409,11 @@ if (typeof module !== 'undefined') module.exports = STUDIO_CONFIG;
 
 // ── Export config ─────────────────────────────────────────────────────────────
 function generateConfig() {
-  const json = JSON.stringify(adminConfig, null, 2);
+  const json = JSON.stringify(mlConfig, null, 2);
   const configText = `// ═══════════════════════════════════════════════════════════════════════════
 //  CMP701 Digital Transformation Studio — Central Configuration
 //  Generated: ${new Date().toISOString()}
-//  Week: ${adminConfig.meta.currentWeek}  |  Cohort: ${adminConfig.meta.cohort}
+//  Week: ${mlConfig.meta.currentWeek}  |  Cohort: ${mlConfig.meta.cohort}
 // ═══════════════════════════════════════════════════════════════════════════
 
 const STUDIO_CONFIG = ${json};
@@ -3440,7 +3440,7 @@ function addCohortBlock() {
     const block = JSON.parse(document.getElementById('new-cohort-paste').value.trim());
     if (!Array.isArray(block)) throw new Error('Expected array of guild objects');
     block.forEach(g => {
-      if (!adminConfig.guilds.find(x => x.id === g.id)) adminConfig.guilds.push(g);
+      if (!mlConfig.guilds.find(x => x.id === g.id)) mlConfig.guilds.push(g);
     });
     showToast(`Added ${block.length} new guilds. Update seminarGroups manually, then export.`);
   } catch(e) { alert('Invalid JSON: ' + e.message); }

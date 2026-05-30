@@ -4,7 +4,7 @@ CMP701 Digital Transformation Studio — Add New Cohort / Campus Group
 Run this to generate the guild JSON for a new intake:
     python scripts/add_cohort.py
 
-Paste the output into admin.html > Cohort tab > "New Guild Block" field,
+Paste the output into moduleleader.html > Cohort tab > "New Guild Block" field,
 or directly append to the guilds array in config.js.
 """
 import json, math, re, csv, sys
@@ -136,7 +136,7 @@ def main():
     guilds_clean = [{k: v for k, v in g.items() if k != '_members'} for g in guilds]
 
     print("\n" + "=" * 60)
-    print("  OUTPUT — paste into admin.html > Cohort > New Guild Block")
+    print("  OUTPUT — paste into moduleleader.html > Cohort > New Guild Block")
     print("=" * 60)
     print(json.dumps(guilds_clean, indent=2))
 

@@ -9,7 +9,7 @@ from pathlib import Path
 
 CONFIG_PATH  = Path(__file__).parent.parent / "config.js"
 STUDIO_DIR   = Path(__file__).parent.parent
-HTML_FILES   = ["index.html", "admin.html", "tutor.html"]
+HTML_FILES   = ["index.html", "moduleleader.html", "tutor.html"]
 PLACEHOLDER  = "<!-- CONFIG_PLACEHOLDER -->"
 
 def extract_config(js_text):

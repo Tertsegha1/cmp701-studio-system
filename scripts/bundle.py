@@ -6,7 +6,7 @@ self-contained (no external file references) and safe to host on Blackboard.
 Usage:
     python scripts/bundle.py
 
-Output: index.html, admin.html, tutor.html  (overwritten in place)
+Output: index.html, moduleleader.html, tutor.html  (overwritten in place)
         → upload these directly to Blackboard Course Files each week
 """
 import json, re, subprocess, sys
@@ -14,7 +14,7 @@ from pathlib import Path
 
 STUDIO_DIR  = Path(__file__).parent.parent
 CONFIG_PATH = STUDIO_DIR / "config.js"
-HTML_FILES  = ["index.html", "admin.html", "tutor.html"]
+HTML_FILES  = ["index.html", "moduleleader.html", "tutor.html"]
 PLACEHOLDER = "<!-- CONFIG_PLACEHOLDER -->"
 
 # ── Parse config.js using Node.js (handles unquoted keys, comments, etc.) ───

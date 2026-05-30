@@ -25,8 +25,8 @@
         <title>Tutor View (Staff Only)</title>
       </item>
 
-      <item identifier="item_admin" identifierref="res_admin">
-        <title>Admin Panel (Module Leader Only)</title>
+      <item identifier="item_ml" identifierref="res_ml">
+        <title>Module Leader Panel (Module Leader Only)</title>
       </item>
 
     </organization>
@@ -48,11 +48,11 @@
       <file href="tutor.html"/>
     </resource>
 
-    <resource identifier="res_admin"
+    <resource identifier="res_ml"
               type="webcontent"
               adlcp:scormtype="asset"
-              href="admin.html">
-      <file href="admin.html"/>
+              href="moduleleader.html">
+      <file href="moduleleader.html"/>
     </resource>
 
   </resources>
