@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMP701 Digital Transformation Studio</title>
+<script src="config.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1b3a6b;--teal:#0d7377;--purple:#7c3aed;--amber:#f59e0b;
+  --green:#15803d;--red:#dc2626;--slate:#64748b;
+  --bg:#f1f5f9;--card:#ffffff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px;min-height:100vh}
+a{color:var(--navy);text-decoration:none}
+a:hover{text-decoration:underline}
+
+/* ── Header ── */
+.header{background:linear-gradient(135deg,var(--navy) 0%,#243b6e 100%);color:#fff;padding:16px 20px;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(0,0,0,.3)}
+.header-inner{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}
+.header h1{font-size:16px;font-weight:700;letter-spacing:-.2px}
+.header .sub{font-size:11px;opacity:.75;margin-top:2px}
+.week-badge{background:var(--amber);color:#1e293b;font-weight:700;font-size:11px;padding:4px 10px;border-radius:20px;white-space:nowrap}
+.phase-badge{font-size:10px;background:rgba(255,255,255,.15);border-radius:12px;padding:3px 8px;margin-top:3px;display:inline-block}
+
+/* ── Layout ── */
+.container{max-width:900px;margin:0 auto;padding:16px}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:640px){.grid-2,.grid-3{grid-template-columns:1fr}}
+
+/* ── Cards ── */
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
+.card-header{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:12px}
+.card-title{font-size:13px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px}
+.card-icon{font-size:20px}
+
+/* ── Guild selector ── */
+.selector-overlay{position:fixed;inset:0;background:rgba(15,23,42,.85);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.selector-box{background:#fff;border-radius:14px;padding:28px;max-width:420px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.selector-box h2{font-size:18px;color:var(--navy);margin-bottom:6px}
+.selector-box p{color:var(--muted);font-size:13px;margin-bottom:20px;line-height:1.5}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12px;font-weight:600;color:var(--slate);margin-bottom:5px;text-transform:uppercase;letter-spacing:.4px}
+.field select,.field input{width:100%;padding:9px 12px;border:1.5px solid var(--border);border-radius:8px;font-size:14px;color:var(--text);background:#fff;appearance:none}
+.field select:focus,.field input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.1)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:10px 18px;border-radius:8px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#243b6e}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-teal:hover{background:#0a5c5f}
+.btn-amber{background:var(--amber);color:#1e293b}
+.btn-amber:hover{background:#d97706}
+.btn-ghost{background:#f1f5f9;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:#e2e8f0}
+.btn-danger{background:#fee2e2;color:var(--red);border:1px solid #fca5a5}
+.btn-sm{padding:6px 12px;font-size:12px}
+.btn-full{width:100%;justify-content:center}
+
+/* ── Guild identity card ── */
+.guild-identity{background:linear-gradient(135deg,var(--navy),#243b6e);color:#fff;border-radius:10px;padding:16px;margin-bottom:14px;position:relative;overflow:hidden}
+.guild-identity::before{content:'';position:absolute;right:-20px;top:-20px;width:100px;height:100px;border-radius:50%;background:rgba(255,255,255,.06)}
+.guild-id{font-size:24px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.guild-meta{font-size:12px;opacity:.8;line-height:1.6}
+.guild-xp{position:absolute;top:16px;right:16px;text-align:right}
+.xp-number{font-size:28px;font-weight:800;color:var(--amber);line-height:1}
+.xp-label{font-size:10px;opacity:.7;margin-top:2px}
+.guild-rank{font-size:12px;color:rgba(255,255,255,.75);margin-top:8px}
+.rank-badge{display:inline-block;background:rgba(245,158,11,.25);border:1px solid rgba(245,158,11,.5);color:var(--amber);border-radius:12px;padding:2px 8px;font-size:11px;font-weight:700}
+.business-tag{display:inline-block;margin-top:8px;background:rgba(255,255,255,.12);border-radius:6px;padding:3px 9px;font-size:11px}
+
+/* ── Progress timeline ── */
+.timeline{display:flex;gap:3px;align-items:center;margin:8px 0}
+.week-dot{flex:1;height:8px;border-radius:4px;background:var(--border);position:relative;cursor:default;transition:all .2s}
+.week-dot.done{background:var(--teal)}
+.week-dot.current{background:var(--amber);box-shadow:0 0 6px rgba(245,158,11,.6)}
+.week-dot.milestone{height:12px;border-radius:4px}
+.week-dot.milestone.done{background:var(--green)}
+.week-dot.milestone.current{background:var(--amber)}
+.timeline-labels{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin-top:4px}
+.progress-pct{font-size:13px;font-weight:700;color:var(--navy);margin-bottom:6px}
+
+/* ── Quest card ── */
+.quest-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.quest-num{background:var(--amber);color:#1e293b;font-weight:800;font-size:16px;width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.quest-title{font-size:16px;font-weight:700;color:var(--navy)}
+.quest-phase{font-size:11px;color:var(--muted);margin-top:2px}
+.quest-brief{font-size:13px;line-height:1.65;color:var(--text);margin-bottom:12px}
+.quest-objective{background:#eff6ff;border-left:3px solid var(--navy);border-radius:0 6px 6px 0;padding:10px 13px;font-size:13px;margin-bottom:12px;font-weight:500;line-height:1.5}
+.quest-objective strong{color:var(--navy)}
+.deliverables-list{list-style:none;padding:0}
+.deliverables-list li{display:flex;align-items:flex-start;gap:8px;font-size:12.5px;line-height:1.5;padding:5px 0;border-bottom:1px solid var(--border)}
+.deliverables-list li:last-child{border-bottom:none}
+.deliverables-list li::before{content:'✓';color:var(--teal);font-weight:700;flex-shrink:0;margin-top:1px}
+.section-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--slate);margin:12px 0 6px}
+.peer-prompt{background:#fef3c7;border:1px solid #fde68a;border-radius:8px;padding:10px 13px;font-size:12.5px;line-height:1.55;color:#92400e}
+.peer-prompt strong{color:#78350f}
+.resources-list{display:flex;flex-wrap:wrap;gap:6px}
+.resource-chip{background:var(--bg);border:1px solid var(--border);border-radius:20px;padding:4px 10px;font-size:11px;color:var(--slate)}
+.xp-chip{background:#f0fdf4;border:1px solid #bbf7d0;border-radius:8px;padding:7px 12px;font-size:12px;color:var(--green);font-weight:500;margin-top:10px}
+.milestone-banner{background:linear-gradient(135deg,#064e3b,#065f46);color:#fff;border-radius:8px;padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:8px;font-size:13px;font-weight:600}
+
+/* ── Leaderboard ── */
+.lb-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.lb-row:last-child{border-bottom:none}
+.lb-row.highlight{background:#fffbeb;margin:0 -6px;padding:8px 6px;border-radius:6px;border-bottom:none}
+.lb-rank{font-size:16px;font-weight:800;min-width:28px;text-align:center;color:var(--muted)}
+.lb-rank.gold{color:#d97706}
+.lb-rank.silver{color:#64748b}
+.lb-rank.bronze{color:#92400e}
+.lb-guild{flex:1;font-weight:600;font-size:13px}
+.lb-business{font-size:11px;color:var(--muted);margin-top:1px}
+.lb-xp{font-size:14px;font-weight:800;color:var(--amber);min-width:60px;text-align:right}
+.lb-bar-wrap{width:80px;height:6px;background:var(--border);border-radius:3px;overflow:hidden}
+.lb-bar{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--teal),var(--amber))}
+.lb-badges{display:flex;gap:3px;margin-top:2px}
+.mini-badge{font-size:12px}
+
+/* ── Action buttons ── */
+.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:420px){.actions-grid{grid-template-columns:1fr}}
+.action-btn{background:var(--card);border:1.5px solid var(--border);border-radius:10px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;display:block;text-decoration:none!important;color:var(--text)}
+.action-btn:hover{border-color:var(--navy);box-shadow:0 4px 12px rgba(27,58,107,.12);transform:translateY(-1px)}
+.action-btn.disabled{opacity:.45;cursor:not-allowed;pointer-events:none}
+.action-icon{font-size:22px;margin-bottom:6px}
+.action-label{font-size:12px;font-weight:700;color:var(--navy)}
+.action-sub{font-size:11px;color:var(--muted);margin-top:2px;line-height:1.3}
+
+/* ── Badges ── */
+.badges-grid{display:flex;flex-wrap:wrap;gap:8px}
+.badge-item{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 10px;font-size:12px}
+.badge-item.earned{background:#fffbeb;border-color:#fde68a}
+.badge-icon{font-size:18px}
+.badge-label{font-weight:600;color:var(--text)}
+.badge-desc{font-size:11px;color:var(--muted);margin-top:1px}
+.badge-item.locked .badge-icon{opacity:.3;filter:grayscale(1)}
+.badge-item.locked .badge-label{color:var(--muted)}
+
+/* ── Tabs ── */
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:16px}
+.tab{padding:8px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .2s}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab:hover:not(.active){color:var(--text)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+
+/* ── Footer ── */
+.footer{text-align:center;padding:20px;font-size:11px;color:var(--muted);border-top:1px solid var(--border);margin-top:20px}
+.footer a{color:var(--muted)}
+
+/* ── Misc ── */
+.alert{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:12px}
+.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.tag{display:inline-block;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:600}
+.tag-cw1{background:#dbeafe;color:#1d4ed8}
+.tag-cw2{background:#ede9fe;color:#6d28d9}
+.hidden{display:none!important}
+.text-center{text-align:center}
+.mt-8{margin-top:8px}
+.mt-12{margin-top:12px}
+.flex-between{display:flex;justify-content:space-between;align-items:center}
+</style>
+</head>
+<body>
+
+<!-- ── Guild Selector Modal ─────────────────────────────────────────────── -->
+<div id="selector-overlay" class="selector-overlay">
+  <div class="selector-box">
+    <h2>🎓 Welcome to the Studio</h2>
+    <p>Select your campus, seminar group, and guild to access your personalised dashboard. Your selection is saved so you only need to do this once.</p>
+    <div class="field">
+      <label>Campus</label>
+      <select id="sel-campus" onchange="populateGroups()">
+        <option value="">— Select campus —</option>
+        <option value="London">London</option>
+        <option value="Birmingham">Birmingham</option>
+        <option value="Manchester">Manchester</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Seminar Group</label>
+      <select id="sel-group" onchange="populateGuilds()" disabled>
+        <option value="">— Select group —</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Guild</label>
+      <select id="sel-guild" disabled>
+        <option value="">— Select guild —</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>Organisation you are analysing (optional — update anytime)</label>
+      <input type="text" id="sel-business" placeholder="e.g. Zara, Netflix, FedEx…">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="confirmSelection()">Enter the Studio →</button>
+  </div>
+</div>
+
+<!-- ── Header ─────────────────────────────────────────────────────────── -->
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="header h1" style="font-size:15px;font-weight:700;color:#fff">CMP701 Digital Transformation Studio</div>
+      <div class="sub">Ulster University QAHE &nbsp;·&nbsp; Jun 2026</div>
+    </div>
+    <div id="header-right" style="text-align:right">
+      <div id="week-badge" class="week-badge">Week 1</div>
+      <div id="phase-badge" class="phase-badge" style="color:#fff;margin-top:4px">Discovery Phase</div>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main content ────────────────────────────────────────────────────── -->
+<div class="container">
+
+  <!-- Guild identity -->
+  <div class="guild-identity" id="guild-identity">
+    <div class="guild-id" id="guild-id-text">—</div>
+    <div class="guild-meta" id="guild-meta-text"></div>
+    <div class="guild-rank"><span class="rank-badge" id="guild-rank-badge">Rank — / —</span></div>
+    <div id="guild-business-tag"></div>
+    <div class="guild-xp">
+      <div class="xp-number" id="guild-xp-num">0</div>
+      <div class="xp-label">XP EARNED</div>
+    </div>
+    <div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-ghost btn-sm" onclick="showSelector()">Change Guild</button>
+      <button class="btn btn-ghost btn-sm" onclick="showBusinessEdit()">Update Organisation</button>
+    </div>
+  </div>
+
+  <!-- Progress Timeline -->
+  <div class="card">
+    <div class="card-header">
+      <div class="card-title">12-Week Progress</div>
+      <div style="font-size:12px;color:var(--muted)" id="deadline-text"></div>
+    </div>
+    <div class="progress-pct" id="progress-pct">Week 1 of 12</div>
+    <div class="timeline" id="timeline"></div>
+    <div class="timeline-labels">
+      <span>W1</span><span>W3</span><span>W5 CW1</span><span>W7</span><span>W9</span><span>W11</span><span>W12 CW2</span>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:10px;font-size:11px;color:var(--muted)">
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:6px;background:var(--teal);border-radius:3px;display:inline-block"></span>Completed</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:6px;background:var(--amber);border-radius:3px;display:inline-block"></span>Current week</span>
+      <span style="display:flex;align-items:center;gap:4px"><span style="width:10px;height:12px;background:var(--border);border-radius:3px;display:inline-block"></span>Milestone</span>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('quest')">📋 Quest</div>
+    <div class="tab" onclick="switchTab('leaderboard')">🏆 Leaderboard</div>
+    <div class="tab" onclick="switchTab('actions')">🔗 Actions</div>
+    <div class="tab" onclick="switchTab('badges')">🎖 Badges</div>
+  </div>
+
+  <!-- Tab: Quest Brief -->
+  <div class="tab-panel active" id="tab-quest">
+    <div class="card" id="quest-card">
+      <div id="quest-content"></div>
+    </div>
+  </div>
+
+  <!-- Tab: Leaderboard -->
+  <div class="tab-panel" id="tab-leaderboard">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Guild Standings</div>
+        <div id="lb-group-label" style="font-size:12px;color:var(--muted)"></div>
+      </div>
+      <div class="alert alert-info" style="font-size:12px;margin-bottom:12px">
+        Showing guilds in <strong id="lb-group-name"></strong> only. Other seminar groups are not visible.
+      </div>
+      <div id="leaderboard-rows"></div>
+    </div>
+  </div>
+
+  <!-- Tab: Actions -->
+  <div class="tab-panel" id="tab-actions">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">This Week's Actions</div>
+        <div class="tag tag-cw1" id="action-phase-tag">CW1</div>
+      </div>
+      <div class="actions-grid" id="actions-grid"></div>
+      <div style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border)">
+        <div class="section-label">Your XP breakdown — Week <span id="action-week-num"></span></div>
+        <div class="xp-chip" id="xp-chip"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tab: Badges -->
+  <div class="tab-panel" id="tab-badges">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Guild Achievements</div>
+        <div id="badge-count" style="font-size:12px;color:var(--muted)"></div>
+      </div>
+      <div class="badges-grid" id="badges-grid"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Business edit modal -->
+<div id="business-modal" class="selector-overlay hidden">
+  <div class="selector-box" style="max-width:360px">
+    <h2 style="font-size:16px">Update Organisation</h2>
+    <p style="font-size:13px">Set the organisation your guild is analysing. This is displayed on the leaderboard.</p>
+    <div class="field">
+      <label>Organisation Name</label>
+      <input type="text" id="business-input" placeholder="e.g. Zara, Netflix, FedEx…">
+    </div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-primary" onclick="saveBusiness()">Save</button>
+      <button class="btn btn-ghost" onclick="closeBusinessModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div class="footer">
+  CMP701 Digital Transformation Studio &nbsp;·&nbsp; Ulster University QAHE &nbsp;·&nbsp; Jun 2026
+  &nbsp;|&nbsp; Module Leader: Dr Tertsegha Anande
+  &nbsp;|&nbsp; <a href="admin.html">Staff Access</a>
+</div>
+
+<script>
+// ── State ────────────────────────────────────────────────────────────────────
+const C = STUDIO_CONFIG;
+let state = {
+  guildId: null,
+  group: null,
+  business: null,
+};
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  const saved = JSON.parse(localStorage.getItem('cmp701_guild') || 'null');
+  if (saved && saved.guildId && C.guilds.find(g => g.id === saved.guildId)) {
+    state = saved;
+    hideSelector();
+    renderAll();
+  } else {
+    document.getElementById('selector-overlay').style.display = 'flex';
+  }
+});
+
+// ── Selector helpers ─────────────────────────────────────────────────────────
+function populateGroups() {
+  const campus = document.getElementById('sel-campus').value;
+  const sel = document.getElementById('sel-group');
+  sel.innerHTML = '<option value="">— Select group —</option>';
+  if (!campus) { sel.disabled = true; return; }
+  Object.entries(C.seminarGroups)
+    .filter(([,g]) => g.campus === campus)
+    .forEach(([key,g]) => {
+      const o = document.createElement('option');
+      o.value = key; o.textContent = g.label;
+      sel.appendChild(o);
+    });
+  sel.disabled = false;
+  document.getElementById('sel-guild').disabled = true;
+  document.getElementById('sel-guild').innerHTML = '<option value="">— Select guild —</option>';
+}
+
+function populateGuilds() {
+  const group = document.getElementById('sel-group').value;
+  const sel = document.getElementById('sel-guild');
+  sel.innerHTML = '<option value="">— Select guild —</option>';
+  if (!group) { sel.disabled = true; return; }
+  C.guilds.filter(g => g.group === group).forEach(g => {
+    const o = document.createElement('option');
+    o.value = g.id; o.textContent = g.id;
+    sel.appendChild(o);
+  });
+  sel.disabled = false;
+}
+
+function confirmSelection() {
+  const guildId = document.getElementById('sel-guild').value;
+  if (!guildId) { alert('Please select your guild.'); return; }
+  state.guildId = guildId;
+  state.group = C.guilds.find(g => g.id === guildId).group;
+  state.business = document.getElementById('sel-business').value.trim() || null;
+  saveState();
+  hideSelector();
+  renderAll();
+}
+
+function showSelector() {
+  document.getElementById('selector-overlay').style.display = 'flex';
+}
+function hideSelector() {
+  document.getElementById('selector-overlay').style.display = 'none';
+}
+function saveState() {
+  localStorage.setItem('cmp701_guild', JSON.stringify(state));
+}
+
+// ── Core render ──────────────────────────────────────────────────────────────
+function renderAll() {
+  const week = C.meta.currentWeek;
+  const wData = C.weeks[week - 1];
+  const guild = C.guilds.find(g => g.id === state.guildId);
+  const groupGuilds = C.guilds.filter(g => g.group === state.group)
+    .sort((a,b) => b.xp - a.xp);
+  const myRank = groupGuilds.findIndex(g => g.id === state.guildId) + 1;
+  const sg = C.seminarGroups[state.group];
+
+  // Sync business from state to guild for display
+  if (state.business) guild.business = state.business;
+
+  // Header
+  document.getElementById('week-badge').textContent = `Week ${week}`;
+  document.getElementById('phase-badge').textContent = wData.phase;
+
+  // Guild identity
+  document.getElementById('guild-id-text').textContent = state.guildId;
+  document.getElementById('guild-meta-text').innerHTML =
+    `${sg.campus} &nbsp;·&nbsp; ${sg.label} &nbsp;·&nbsp; Tutor: ${sg.tutors.join(' / ')}`;
+  document.getElementById('guild-xp-num').textContent = guild.xp.toLocaleString();
+  document.getElementById('guild-rank-badge').textContent =
+    `Rank ${myRank} of ${groupGuilds.length}`;
+  const btag = document.getElementById('guild-business-tag');
+  if (guild.business || state.business) {
+    btag.innerHTML = `<span class="business-tag">📊 ${guild.business || state.business}</span>`;
+  }
+
+  // Timeline
+  renderTimeline(week);
+
+  // Deadline text
+  const cw1Date = new Date(C.meta.cw1Deadline);
+  const cw2Date = new Date(C.meta.cw2Deadline);
+  const now = new Date();
+  const daysTo = (d) => Math.ceil((d - now) / 86400000);
+  let dlText = '';
+  if (week <= 5) dlText = `CW1 due ${cw1Date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (${Math.max(0,daysTo(cw1Date))} days)`;
+  else dlText = `CW2 due ${cw2Date.toLocaleDateString('en-GB',{day:'numeric',month:'short'})} (${Math.max(0,daysTo(cw2Date))} days)`;
+  document.getElementById('deadline-text').textContent = dlText;
+  document.getElementById('progress-pct').textContent = `Week ${week} of 12 — ${Math.round((week/12)*100)}% complete`;
+
+  // Quest
+  renderQuest(wData, week);
+
+  // Leaderboard
+  renderLeaderboard(groupGuilds, state.guildId, sg);
+
+  // Actions
+  renderActions(wData, guild, week);
+
+  // Badges
+  renderBadges(guild);
+}
+
+function renderTimeline(currentWeek) {
+  const tl = document.getElementById('timeline');
+  tl.innerHTML = '';
+  for (let w = 1; w <= 12; w++) {
+    const wData = C.weeks[w-1];
+    const dot = document.createElement('div');
+    dot.className = 'week-dot' +
+      (wData.isMilestone ? ' milestone' : '') +
+      (w < currentWeek ? ' done' : '') +
+      (w === currentWeek ? ' current' : '');
+    dot.title = `Week ${w}: ${wData.title}`;
+    tl.appendChild(dot);
+  }
+}
+
+function renderQuest(wData, week) {
+  const assessTag = wData.assessmentPhase.includes('SUBMISSION')
+    ? `<span class="tag" style="background:#fef3c7;color:#92400e;font-weight:700">${wData.assessmentPhase}</span>`
+    : wData.assessmentPhase.startsWith('CW1')
+      ? `<span class="tag tag-cw1">${wData.assessmentPhase}</span>`
+      : `<span class="tag tag-cw2">${wData.assessmentPhase}</span>`;
+
+  let milestoneBanner = '';
+  if (wData.isMilestone) {
+    milestoneBanner = `<div class="milestone-banner">🏁 Milestone Week — ${wData.milestoneLabel}</div>`;
+  }
+
+  const deliverables = wData.deliverables.map(d => `<li>${d}</li>`).join('');
+
+  let orgs = '';
+  if (wData.organisations) {
+    orgs = `<div class="section-label">Suggested Organisations</div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px">
+    ${wData.organisations.map(o=>`<span class="resource-chip">${o}</span>`).join('')}
+    </div>`;
+  }
+
+  document.getElementById('quest-content').innerHTML = `
+    ${milestoneBanner}
+    <div class="quest-header">
+      <div class="quest-num">${week}</div>
+      <div>
+        <div class="quest-title">${wData.title} ${assessTag}</div>
+        <div class="quest-phase">${wData.phase}</div>
+      </div>
+    </div>
+    <div class="quest-brief">${wData.questBrief}</div>
+    <div class="quest-objective"><strong>Mission Objective:</strong> ${wData.missionObjective}</div>
+
+    <div class="section-label">Deliverables</div>
+    <ul class="deliverables-list">${deliverables}</ul>
+
+    ${orgs}
+
+    <div class="section-label">Peer Review Prompt</div>
+    <div class="peer-prompt"><strong>Your peer review task:</strong> ${wData.peerReviewPrompt}</div>
+
+    <div class="section-label">Assessment Alignment</div>
+    <div style="font-size:12.5px;color:var(--text);padding:8px 12px;background:var(--bg);border-radius:6px;line-height:1.5">
+      ${wData.cwAlignment}
+    </div>
+
+    ${wData.tutorTip ? `<div class="section-label">Tutor Tip</div>
+    <div style="font-size:12.5px;color:var(--teal);padding:8px 12px;background:#f0fdfa;border:1px solid #99f6e4;border-radius:6px;line-height:1.5">
+      💬 ${wData.tutorTip}
+    </div>` : ''}
+
+    <div class="section-label">Resources</div>
+    <div class="resources-list">${wData.resources.map(r=>`<span class="resource-chip">📁 ${r}</span>`).join('')}</div>
+
+    <div class="xp-chip">⚡ ${wData.xpBreakdown}</div>
+  `;
+}
+
+function renderLeaderboard(groupGuilds, myGuildId, sg) {
+  document.getElementById('lb-group-label').textContent = `${sg.campus} Campus`;
+  document.getElementById('lb-group-name').textContent = sg.label;
+  const container = document.getElementById('leaderboard-rows');
+  container.innerHTML = '';
+
+  groupGuilds.forEach((guild, i) => {
+    const rank = i + 1;
+    const isMe = guild.id === myGuildId;
+    const maxXp = groupGuilds[0].xp || 1;
+    const pct = Math.round((guild.xp / maxXp) * 100);
+
+    let rankClass = 'lb-rank';
+    let rankIcon = rank;
+    if (rank === 1) { rankClass += ' gold'; rankIcon = '🥇'; }
+    else if (rank === 2) { rankClass += ' silver'; rankIcon = '🥈'; }
+    else if (rank === 3) { rankClass += ' bronze'; rankIcon = '🥉'; }
+
+    const row = document.createElement('div');
+    row.className = 'lb-row' + (isMe ? ' highlight' : '');
+    row.innerHTML = `
+      <div class="${rankClass}">${rankIcon}</div>
+      <div class="lb-guild">
+        <div>${guild.id}${isMe ? ' <span style="font-size:10px;background:#fef9c3;border:1px solid #fde047;border-radius:8px;padding:1px 6px;color:#713f12">YOU</span>' : ''}</div>
+        <div class="lb-business">${guild.business || '—'}</div>
+        <div class="lb-badges">${guild.badges.map(b => {
+          const bd = C.badges.find(x=>x.id===b);
+          return bd ? `<span class="mini-badge" title="${bd.label}">${bd.icon}</span>` : '';
+        }).join('')}</div>
+      </div>
+      <div style="text-align:right">
+        <div class="lb-xp">${guild.xp.toLocaleString()} XP</div>
+        <div class="lb-bar-wrap" style="margin:4px 0 0 auto">
+          <div class="lb-bar" style="width:${pct}%"></div>
+        </div>
+      </div>
+    `;
+    container.appendChild(row);
+  });
+}
+
+function renderActions(wData, guild, week) {
+  const groupLinks = C.bbLinks[state.group] || {};
+  const isPhase1 = wData.assessmentPhase.includes('CW1');
+  document.getElementById('action-phase-tag').textContent = wData.assessmentPhase;
+  document.getElementById('action-phase-tag').className = isPhase1 ? 'tag tag-cw1' : 'tag tag-cw2';
+  document.getElementById('action-week-num').textContent = week;
+  document.getElementById('xp-chip').textContent = '⚡ ' + wData.xpBreakdown;
+
+  const submitUrl = groupLinks.currentAssignment || '';
+  const peerUrl = groupLinks.peerReviewForm || '';
+  const wsUrl = (groupLinks.guildWorkspaces || {})[state.guildId] || '';
+  const gradesUrl = C.bbLinks.gradebook || '';
+
+  const actions = [
+    { icon:'📤', label:'Submit Artefact', sub:`Week ${week}: ${wData.title}`, url:submitUrl },
+    { icon:'🤝', label:'Peer Review', sub:'Review assigned guild\'s work', url:peerUrl },
+    { icon:'🏰', label:'Guild Workspace', sub:'Collaborate with your guild', url:wsUrl },
+    { icon:'📊', label:'My Grades', sub:'View feedback & marks', url:gradesUrl },
+  ];
+
+  const grid = document.getElementById('actions-grid');
+  grid.innerHTML = actions.map(a => {
+    const hasUrl = a.url && a.url.length > 0;
+    return `<a href="${hasUrl ? a.url : '#'}" target="${hasUrl ? '_blank' : '_self'}"
+      class="action-btn${hasUrl ? '' : ' disabled'}" rel="noopener">
+      <div class="action-icon">${a.icon}</div>
+      <div class="action-label">${a.label}</div>
+      <div class="action-sub">${hasUrl ? a.sub : 'Link coming soon'}</div>
+    </a>`;
+  }).join('');
+}
+
+function renderBadges(guild) {
+  const earned = new Set(guild.badges);
+  const count = earned.size;
+  document.getElementById('badge-count').textContent = `${count} / ${C.badges.length} earned`;
+  const grid = document.getElementById('badges-grid');
+  grid.innerHTML = C.badges.map(b => {
+    const isEarned = earned.has(b.id);
+    return `<div class="badge-item${isEarned ? ' earned' : ' locked'}">
+      <div class="badge-icon">${b.icon}</div>
+      <div>
+        <div class="badge-label">${b.label}</div>
+        <div class="badge-desc">${b.desc}</div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ── Tab switching ────────────────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const ids = ['quest','leaderboard','actions','badges'];
+    t.classList.toggle('active', ids[i] === id);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-' + id);
+  });
+}
+
+// ── Business update ──────────────────────────────────────────────────────────
+function showBusinessEdit() {
+  const guild = C.guilds.find(g => g.id === state.guildId);
+  document.getElementById('business-input').value = guild.business || state.business || '';
+  document.getElementById('business-modal').classList.remove('hidden');
+}
+function closeBusinessModal() {
+  document.getElementById('business-modal').classList.add('hidden');
+}
+function saveBusiness() {
+  const val = document.getElementById('business-input').value.trim();
+  state.business = val;
+  saveState();
+  closeBusinessModal();
+  renderAll();
+}
+</script>
+</body>
+</html>

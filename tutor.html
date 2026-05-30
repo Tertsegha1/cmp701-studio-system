@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMP701 Studio — Tutor View</title>
+<script src="config.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{--navy:#1b3a6b;--teal:#0d7377;--amber:#f59e0b;--green:#15803d;--bg:#f1f5f9;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.header{background:linear-gradient(135deg,var(--teal),#0a5c5f);color:#fff;padding:14px 20px}
+.header-inner{max-width:900px;margin:0 auto;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:10px}
+.container{max-width:900px;margin:0 auto;padding:16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:16px;margin-bottom:14px}
+.card-title{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:12px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.login-screen{position:fixed;inset:0;background:rgba(15,23,42,.9);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:#fff;border-radius:14px;padding:28px;max-width:380px;width:100%;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.4)}
+.login-box h2{font-size:18px;color:var(--navy);margin-bottom:8px}
+.field{margin-bottom:12px;text-align:left}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.field input,.field select{width:100%;padding:9px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:14px}
+.field input:focus,.field select:focus{outline:none;border-color:var(--teal)}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-ghost{background:#f1f5f9;color:var(--text);border:1px solid var(--border)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-full{width:100%;justify-content:center}
+.alert{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:12px}
+.alert-info{background:#f0fdfa;border:1px solid #99f6e4;color:#065f46}
+.alert-warn{background:#fef3c7;border:1px solid #fde68a;color:#92400e}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:600px){.grid-2{grid-template-columns:1fr}}
+/* Guild cards */
+.guild-card{border:1.5px solid var(--border);border-radius:9px;padding:13px;transition:box-shadow .2s}
+.guild-card:hover{box-shadow:0 4px 12px rgba(0,0,0,.08)}
+.guild-name{font-weight:700;font-size:14px;color:var(--navy)}
+.guild-business{font-size:12px;color:var(--muted);margin-top:2px}
+.guild-xp-bar{background:var(--bg);border-radius:4px;height:6px;margin:8px 0 4px;overflow:hidden}
+.guild-xp-fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--amber));border-radius:4px;transition:width .4s}
+.xp-num{font-size:18px;font-weight:800;color:var(--amber)}
+.rank-num{font-size:11px;color:var(--muted);margin-top:2px}
+.weekly-dots{display:flex;gap:3px;margin-top:8px}
+.w-dot{width:16px;height:16px;border-radius:50%;background:var(--border);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:#fff;flex-shrink:0}
+.w-dot.done{background:var(--teal)}
+.w-dot.partial{background:var(--amber)}
+.w-dot.cur{background:var(--navy);box-shadow:0 0 4px rgba(27,58,107,.5)}
+/* XP report form */
+.xp-report-row{display:flex;align-items:center;gap:10px;padding:8px 0;border-bottom:1px solid var(--border)}
+.xp-report-row:last-child{border-bottom:none}
+.xp-mini-input{width:60px;padding:4px 7px;border:1.5px solid var(--border);border-radius:5px;font-size:13px;text-align:center;font-weight:600}
+.xp-mini-input:focus{outline:none;border-color:var(--amber)}
+</style>
+</head>
+<body>
+
+<!-- ── Login screen ──────────────────────────────────────────────────────── -->
+<div id="login-screen" class="login-screen">
+  <div class="login-box">
+    <div style="font-size:36px;margin-bottom:12px">👩‍🏫</div>
+    <h2>Tutor Access</h2>
+    <p style="color:var(--muted);font-size:13px;margin-bottom:20px">Enter your name and PIN to view your seminar groups.</p>
+    <div id="login-error" style="display:none" class="alert" style="background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d;text-align:left"></div>
+    <div class="field">
+      <label>Your Name</label>
+      <select id="tutor-sel">
+        <option value="">— Select your name —</option>
+      </select>
+    </div>
+    <div class="field">
+      <label>PIN</label>
+      <input type="password" id="pin-input" placeholder="Enter your PIN" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-teal btn-full" onclick="doLogin()">Sign In</button>
+  </div>
+</div>
+
+<!-- ── Header ────────────────────────────────────────────────────────────── -->
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div style="font-size:15px;font-weight:700;color:#fff">CMP701 Studio — Tutor View</div>
+      <div style="font-size:11px;opacity:.75;margin-top:2px" id="tutor-header-sub">Ulster University QAHE</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span id="week-badge" style="background:var(--amber);color:#1e293b;font-weight:700;font-size:11px;padding:4px 10px;border-radius:12px"></span>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Log out</button>
+      <a href="index.html" class="btn btn-ghost btn-sm">Student View</a>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+
+  <!-- Week summary -->
+  <div class="card" id="week-summary-card">
+    <div class="card-title">This Week's Quest</div>
+    <div id="week-summary"></div>
+  </div>
+
+  <!-- Tutor actions (~5 min each week) -->
+  <div class="card">
+    <div class="card-title">Your Weekly Actions (~5 min)</div>
+    <div style="display:flex;flex-direction:column;gap:10px">
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="min-width:24px;height:24px;background:var(--teal);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</div>
+        <div><strong>Mark submissions</strong> in Blackboard as usual — no change to your existing workflow.</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="min-width:24px;height:24px;background:var(--teal);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</div>
+        <div><strong>Enter XP scores below</strong> for each guild and click "Copy XP Report" to send to the Module Leader.</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:10px">
+        <div style="min-width:24px;height:24px;background:var(--teal);color:#fff;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</div>
+        <div>Module Leader updates config.js and re-deploys — <strong>you don't touch any files</strong>.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- My seminar groups -->
+  <div id="groups-container"></div>
+
+  <!-- XP Report builder -->
+  <div class="card" id="xp-report-card">
+    <div class="card-title">XP Report — Submit to Module Leader</div>
+    <div class="alert alert-info" style="margin-bottom:14px">
+      Enter XP for each guild, then copy the report and email/message it to Dr Tertsegha Anande.
+      Max: <strong>110 XP</strong> per guild per week (60 submit + 20 peer review + 20 quality + 10 participation).
+    </div>
+    <div id="xp-report-rows"></div>
+    <div style="margin-top:14px;display:flex;gap:8px;flex-wrap:wrap">
+      <button class="btn btn-teal" onclick="copyXPReport()">📋 Copy XP Report</button>
+      <button class="btn btn-ghost" onclick="clearXPReport()">Clear</button>
+    </div>
+    <div id="xp-report-output" style="display:none;margin-top:12px">
+      <div style="font-size:12px;font-weight:600;color:var(--muted);margin-bottom:6px;text-transform:uppercase">Report (copied to clipboard):</div>
+      <pre id="xp-report-text" style="background:#0f172a;color:#e2e8f0;padding:12px;border-radius:8px;font-size:12px;line-height:1.6;white-space:pre-wrap"></pre>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const C = STUDIO_CONFIG;
+let currentTutor = null;
+
+// ── Login ─────────────────────────────────────────────────────────────────────
+window.addEventListener('DOMContentLoaded', () => {
+  // Populate tutor dropdown
+  const sel = document.getElementById('tutor-sel');
+  C.tutors.forEach(t => {
+    const o = document.createElement('option');
+    o.value = t.name; o.textContent = t.name;
+    sel.appendChild(o);
+  });
+
+  const saved = sessionStorage.getItem('cmp701_tutor');
+  if (saved) {
+    currentTutor = JSON.parse(saved);
+    document.getElementById('login-screen').style.display = 'none';
+    initTutor();
+  }
+});
+
+function doLogin() {
+  const name = document.getElementById('tutor-sel').value;
+  const pin = document.getElementById('pin-input').value;
+  const tutor = C.tutors.find(t => t.name === name && t.pin === pin);
+  const errEl = document.getElementById('login-error');
+  if (!name) { errEl.textContent = 'Select your name.'; errEl.style.display='block'; return; }
+  if (tutor) {
+    currentTutor = tutor;
+    sessionStorage.setItem('cmp701_tutor', JSON.stringify(tutor));
+    document.getElementById('login-screen').style.display = 'none';
+    initTutor();
+  } else {
+    errEl.textContent = 'Incorrect PIN. Contact the Module Leader if locked out.';
+    errEl.style.display = 'block';
+  }
+}
+function doLogout() { sessionStorage.removeItem('cmp701_tutor'); location.reload(); }
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+function initTutor() {
+  const week = C.meta.currentWeek;
+  const wData = C.weeks[week - 1];
+  document.getElementById('week-badge').textContent = `Week ${week}: ${wData.title}`;
+  document.getElementById('tutor-header-sub').textContent =
+    `${currentTutor.name} &nbsp;·&nbsp; ${currentTutor.groups.join(', ')}`;
+
+  // Week summary
+  document.getElementById('week-summary').innerHTML = `
+    <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-start">
+      <div style="flex:1;min-width:200px">
+        <div style="font-size:15px;font-weight:700;color:var(--navy)">${wData.title}</div>
+        <div style="font-size:12px;color:var(--muted);margin-top:3px">${wData.phase} &nbsp;·&nbsp; ${wData.assessmentPhase}</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.55;color:var(--text)">${wData.questBrief}</div>
+      </div>
+      <div style="background:var(--bg);border-radius:8px;padding:12px;min-width:200px">
+        <div style="font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">Assessment Alignment</div>
+        <div style="font-size:12.5px;line-height:1.5">${wData.cwAlignment}</div>
+        <div style="margin-top:8px;font-size:12px;color:var(--teal);background:#f0fdfa;border-radius:6px;padding:7px 10px;line-height:1.5">
+          💬 ${wData.tutorTip || 'No tutor tip this week.'}
+        </div>
+      </div>
+    </div>
+  `;
+
+  renderGroups();
+  renderXPReportForm();
+}
+
+// ── Render groups ─────────────────────────────────────────────────────────────
+function renderGroups() {
+  const week = C.meta.currentWeek;
+  const container = document.getElementById('groups-container');
+  container.innerHTML = '';
+
+  currentTutor.groups.forEach(groupKey => {
+    const sg = C.seminarGroups[groupKey];
+    const guilds = C.guilds.filter(g => g.group === groupKey).sort((a,b) => b.xp - a.xp);
+    const maxXP = guilds[0]?.xp || 1;
+    const links = C.bbLinks[groupKey] || {};
+
+    const guildCards = guilds.map((guild, i) => {
+      const rank = i + 1;
+      const pct = maxXP > 0 ? Math.round((guild.xp / maxXP) * 100) : 0;
+      const weekDots = guild.weeklyXP.slice(0, 12).map((xp, wi) => {
+        const isCur = (wi + 1) === week;
+        const isDone = (wi + 1) < week && xp > 0;
+        const isPartial = (wi + 1) < week && xp === 0;
+        return `<div class="w-dot${isDone?' done':isCur?' cur':''}" title="W${wi+1}: ${xp} XP">${wi+1}</div>`;
+      }).join('');
+      const wsUrl = (links.guildWorkspaces || {})[guild.id] || '';
+      return `<div class="guild-card">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start">
+          <div>
+            <div class="guild-name">${guild.id} <span style="font-size:11px;color:var(--muted);font-weight:400">#${rank}</span></div>
+            <div class="guild-business">${guild.business || '— organisation not set —'}</div>
+          </div>
+          <div style="text-align:right">
+            <div class="xp-num">${guild.xp}</div>
+            <div class="rank-num">XP total</div>
+          </div>
+        </div>
+        <div class="guild-xp-bar"><div class="guild-xp-fill" style="width:${pct}%"></div></div>
+        <div style="font-size:10px;color:var(--muted)">Weekly XP progress:</div>
+        <div class="weekly-dots" style="flex-wrap:wrap">${weekDots}</div>
+        ${wsUrl ? `<div style="margin-top:8px"><a href="${wsUrl}" target="_blank" class="btn btn-ghost btn-sm" style="font-size:11px">🏰 Guild Workspace ↗</a></div>` : ''}
+      </div>`;
+    }).join('');
+
+    const assignUrl = links.currentAssignment || '';
+    const peerUrl = links.peerReviewForm || '';
+
+    const section = document.createElement('div');
+    section.className = 'card';
+    section.innerHTML = `
+      <div class="card-title">${sg.label} &nbsp;<span style="font-size:10px;font-weight:400;color:var(--muted)">${sg.campus} · ${guilds.length} guilds</span></div>
+      <div style="display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap">
+        ${assignUrl ? `<a href="${assignUrl}" target="_blank" class="btn btn-teal btn-sm">📤 This week's assignment ↗</a>` : '<span style="font-size:12px;color:var(--muted)">Assignment link not yet set</span>'}
+        ${peerUrl ? `<a href="${peerUrl}" target="_blank" class="btn btn-ghost btn-sm">🤝 Peer review form ↗</a>` : ''}
+      </div>
+      <div class="grid-2">${guildCards}</div>
+    `;
+    container.appendChild(section);
+  });
+}
+
+// ── XP Report form ────────────────────────────────────────────────────────────
+function renderXPReportForm() {
+  const week = C.meta.currentWeek;
+  const myGuilds = C.guilds.filter(g => currentTutor.groups.includes(g.group));
+  const rows = myGuilds.map(g =>
+    `<div class="xp-report-row">
+      <div style="min-width:120px;font-weight:600;font-size:13px">${g.id}</div>
+      <div style="flex:1;font-size:12px;color:var(--muted)">${g.business || '—'}</div>
+      <div style="display:flex;align-items:center;gap:5px">
+        <input class="xp-mini-input" type="number" min="0" max="110" value="" id="report-xp-${g.id}" placeholder="0">
+        <span style="font-size:11px;color:var(--muted)">/110 XP</span>
+      </div>
+    </div>`
+  ).join('');
+  document.getElementById('xp-report-rows').innerHTML = rows;
+}
+
+function copyXPReport() {
+  const week = C.meta.currentWeek;
+  const wData = C.weeks[week - 1];
+  const myGuilds = C.guilds.filter(g => currentTutor.groups.includes(g.group));
+  let report = `CMP701 Studio — XP Report\n`;
+  report += `Tutor: ${currentTutor.name}\n`;
+  report += `Week ${week}: ${wData.title}\n`;
+  report += `Date: ${new Date().toLocaleDateString('en-GB',{day:'numeric',month:'long',year:'numeric'})}\n`;
+  report += `${'─'.repeat(40)}\n`;
+  myGuilds.forEach(g => {
+    const xp = document.getElementById(`report-xp-${g.id}`)?.value || '0';
+    report += `${g.id.padEnd(14)} ${xp.padStart(3)} XP   (${g.business || 'no org set'})\n`;
+  });
+  report += `${'─'.repeat(40)}\n`;
+  report += `Please update config.js and redeploy. Thank you.`;
+
+  navigator.clipboard.writeText(report).then(() => {
+    document.getElementById('xp-report-text').textContent = report;
+    document.getElementById('xp-report-output').style.display = 'block';
+  }).catch(() => {
+    document.getElementById('xp-report-text').textContent = report;
+    document.getElementById('xp-report-output').style.display = 'block';
+  });
+}
+function clearXPReport() {
+  document.querySelectorAll('[id^=report-xp-]').forEach(el => el.value = '');
+  document.getElementById('xp-report-output').style.display = 'none';
+}
+</script>
+</body>
+</html>

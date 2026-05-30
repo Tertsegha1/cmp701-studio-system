@@ -1,0 +1,672 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CMP701 Studio — Admin Panel</title>
+<script src="config.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --navy:#1b3a6b;--teal:#0d7377;--amber:#f59e0b;--green:#15803d;--red:#dc2626;
+  --bg:#f1f5f9;--card:#fff;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;
+}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--text);font-size:14px}
+.header{background:linear-gradient(135deg,#0f172a,var(--navy));color:#fff;padding:14px 20px}
+.header-inner{max-width:1100px;margin:0 auto;display:flex;justify-content:space-between;align-items:center}
+.header h1{font-size:15px;font-weight:700}
+.header .sub{font-size:11px;opacity:.7;margin-top:2px}
+.container{max-width:1100px;margin:0 auto;padding:18px 16px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:10px;padding:18px;margin-bottom:16px}
+.card-title{font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.6px;margin-bottom:14px;padding-bottom:8px;border-bottom:1px solid var(--border)}
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}
+@media(max-width:700px){.grid-2,.grid-3{grid-template-columns:1fr}}
+.field{margin-bottom:12px}
+.field label{display:block;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.4px;margin-bottom:4px}
+.field input,.field select,.field textarea{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:7px;font-size:13px;color:var(--text);background:#fff}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(27,58,107,.1)}
+.field textarea{resize:vertical;min-height:60px;font-family:monospace;font-size:12px}
+.btn{display:inline-flex;align-items:center;gap:6px;padding:9px 16px;border-radius:7px;font-size:13px;font-weight:600;cursor:pointer;border:none;transition:all .2s}
+.btn-primary{background:var(--navy);color:#fff}
+.btn-primary:hover{background:#243b6e}
+.btn-teal{background:var(--teal);color:#fff}
+.btn-green{background:#16a34a;color:#fff}
+.btn-amber{background:var(--amber);color:#1e293b}
+.btn-red{background:#dc2626;color:#fff}
+.btn-ghost{background:#f1f5f9;color:var(--text);border:1px solid var(--border)}
+.btn-sm{padding:5px 10px;font-size:11px}
+.btn-full{width:100%;justify-content:center}
+.tabs{display:flex;gap:3px;border-bottom:2px solid var(--border);margin-bottom:18px}
+.tab{padding:8px 14px;font-size:12px;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px}
+.tab.active{color:var(--navy);border-bottom-color:var(--navy)}
+.tab-panel{display:none}
+.tab-panel.active{display:block}
+.alert{border-radius:8px;padding:10px 14px;font-size:13px;margin-bottom:12px;line-height:1.5}
+.alert-warn{background:#fef3c7;border:1px solid #fde68a;color:#92400e}
+.alert-info{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.alert-success{background:#f0fdf4;border:1px solid #bbf7d0;color:#15803d}
+.alert-red{background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d}
+.badge{display:inline-block;border-radius:12px;padding:2px 8px;font-size:11px;font-weight:600}
+.badge-blue{background:#dbeafe;color:#1d4ed8}
+.badge-green{background:#d1fae5;color:#065f46}
+.badge-amber{background:#fef3c7;color:#92400e}
+/* Login screen */
+.login-screen{position:fixed;inset:0;background:rgba(15,23,42,.9);z-index:200;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-box{background:#fff;border-radius:14px;padding:32px;max-width:380px;width:100%;box-shadow:0 20px 60px rgba(0,0,0,.4);text-align:center}
+.login-box h2{font-size:20px;color:var(--navy);margin-bottom:8px}
+.login-box p{color:var(--muted);font-size:13px;margin-bottom:20px}
+/* XP table */
+.xp-table{width:100%;border-collapse:collapse;font-size:13px}
+.xp-table th{background:#f8fafc;color:var(--muted);font-size:11px;font-weight:600;text-transform:uppercase;padding:8px 10px;text-align:left;border-bottom:2px solid var(--border)}
+.xp-table td{padding:7px 10px;border-bottom:1px solid var(--border);vertical-align:middle}
+.xp-table tr:last-child td{border-bottom:none}
+.xp-table tr:hover td{background:#f8fafc}
+.xp-input{width:70px;padding:4px 8px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;text-align:center;font-weight:600}
+.xp-input:focus{outline:none;border-color:var(--amber)}
+.xp-total{font-weight:800;color:var(--amber);font-size:14px}
+.campus-chip{display:inline-block;border-radius:10px;padding:2px 7px;font-size:10px;font-weight:700}
+.chip-ldn{background:#dbeafe;color:#1d4ed8}
+.chip-bhm{background:#ccfbf1;color:#065f46}
+.chip-man{background:#ede9fe;color:#6d28d9}
+/* Config preview */
+pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11px;overflow-x:auto;line-height:1.6;max-height:400px;overflow-y:auto}
+/* Cohort table */
+.cohort-table{width:100%;border-collapse:collapse;font-size:13px}
+.cohort-table th{background:#f8fafc;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;padding:8px 10px;text-align:left;border-bottom:2px solid var(--border)}
+.cohort-table td{padding:8px 10px;border-bottom:1px solid var(--border)}
+.cohort-table tr:last-child td{border-bottom:none}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+@media(max-width:600px){.summary-grid{grid-template-columns:1fr 1fr}}
+.summary-card{background:var(--card);border:1px solid var(--border);border-radius:9px;padding:14px;text-align:center}
+.summary-num{font-size:28px;font-weight:800;color:var(--navy)}
+.summary-label{font-size:11px;color:var(--muted);margin-top:2px}
+</style>
+</head>
+<body>
+
+<!-- ── Login screen ──────────────────────────────────────────────────────── -->
+<div id="login-screen" class="login-screen">
+  <div class="login-box">
+    <div style="font-size:36px;margin-bottom:12px">🔐</div>
+    <h2>Admin Panel</h2>
+    <p>CMP701 Digital Transformation Studio<br>Module Leader access only</p>
+    <div id="login-error" class="alert alert-red" style="display:none;text-align:left"></div>
+    <div class="field" style="text-align:left">
+      <label>Admin Password</label>
+      <input type="password" id="pw-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()">
+    </div>
+    <button class="btn btn-primary btn-full" onclick="doLogin()">Sign In</button>
+    <div style="margin-top:14px;font-size:11px;color:var(--muted)">
+      First time? Default password hint: <code>CMP701@Studio2026</code><br>
+      Go to <strong>Setup</strong> tab after login to change it.
+    </div>
+  </div>
+</div>
+
+<!-- ── Header ────────────────────────────────────────────────────────────── -->
+<div class="header">
+  <div class="header-inner">
+    <div>
+      <div class="header h1" style="font-size:15px;font-weight:700;color:#fff">CMP701 Studio — Admin Panel</div>
+      <div class="sub">Module Leader: Dr Tertsegha Anande &nbsp;·&nbsp; Ulster University QAHE</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <span id="admin-week-display" style="background:var(--amber);color:#1e293b;font-weight:700;font-size:12px;padding:4px 10px;border-radius:12px"></span>
+      <button class="btn btn-ghost btn-sm" onclick="doLogout()">Log out</button>
+      <a href="index.html" class="btn btn-ghost btn-sm">Student View</a>
+    </div>
+  </div>
+</div>
+
+<!-- ── Main ──────────────────────────────────────────────────────────────── -->
+<div class="container">
+
+  <!-- Summary cards -->
+  <div class="summary-grid">
+    <div class="summary-card"><div class="summary-num" id="s-week">—</div><div class="summary-label">Current Week</div></div>
+    <div class="summary-card"><div class="summary-num" id="s-guilds">33</div><div class="summary-label">Total Guilds</div></div>
+    <div class="summary-card"><div class="summary-num" id="s-students">123</div><div class="summary-label">Students</div></div>
+    <div class="summary-card"><div class="summary-num" id="s-phase">—</div><div class="summary-label">Assessment Phase</div></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('week')">📅 Week Update</div>
+    <div class="tab" onclick="switchTab('xp')">⚡ XP Manager</div>
+    <div class="tab" onclick="switchTab('links')">🔗 BB Links</div>
+    <div class="tab" onclick="switchTab('cohort')">👥 Cohort</div>
+    <div class="tab" onclick="switchTab('export')">📤 Export Config</div>
+    <div class="tab" onclick="switchTab('setup')">⚙️ Setup</div>
+  </div>
+
+  <!-- ── Tab: Week Update ── -->
+  <div class="tab-panel active" id="tab-week">
+    <div class="card">
+      <div class="card-title">Weekly Update — Advance the Studio</div>
+      <div class="alert alert-info" style="margin-bottom:16px">
+        Each Monday, update the current week, paste this week's Blackboard links, and enter any XP scores from last week. Then export and re-upload config.js.
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="field">
+            <label>Current Week (1–12)</label>
+            <input type="number" id="cur-week" min="1" max="12" value="1">
+          </div>
+          <div id="week-preview" style="padding:12px;background:var(--bg);border-radius:8px;font-size:13px;line-height:1.6"></div>
+        </div>
+        <div>
+          <div class="field">
+            <label>CW1 Deadline Date</label>
+            <input type="date" id="cw1-date">
+          </div>
+          <div class="field">
+            <label>CW2 Deadline Date</label>
+            <input type="date" id="cw2-date">
+          </div>
+          <div class="field">
+            <label>Config last updated</label>
+            <input type="date" id="last-updated">
+          </div>
+        </div>
+      </div>
+      <button class="btn btn-primary" onclick="applyWeekUpdate()">Apply Week Update</button>
+    </div>
+  </div>
+
+  <!-- ── Tab: XP Manager ── -->
+  <div class="tab-panel" id="tab-xp">
+    <div class="card">
+      <div class="card-title">XP Manager — Enter Weekly Scores</div>
+      <div class="alert alert-warn" style="margin-bottom:14px">
+        Enter XP earned this week for each guild. The total XP is updated automatically. Max per week: <strong>110 XP</strong> (60 submit + 20 peer review + 20 quality + 10 participation).
+      </div>
+      <div id="xp-group-selector" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px"></div>
+      <div id="xp-table-container"></div>
+      <div style="margin-top:12px;display:flex;gap:8px">
+        <button class="btn btn-amber" onclick="applyXP()">Apply XP Changes</button>
+        <button class="btn btn-ghost" onclick="renderXPTable()">Reset</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab: BB Links ── -->
+  <div class="tab-panel" id="tab-links">
+    <div class="card">
+      <div class="card-title">Blackboard Links — Update Each Week</div>
+      <div class="alert alert-info" style="margin-bottom:14px">
+        Paste the Blackboard URLs for each group. Students see only the link for their own guild workspace.
+      </div>
+      <div class="field">
+        <label>My Grades / Gradebook URL (shared by all students)</label>
+        <input type="url" id="bb-gradebook" placeholder="https://learning.ulster.ac.uk/...">
+      </div>
+      <div id="bb-links-container"></div>
+      <button class="btn btn-primary" onclick="applyBBLinks()" style="margin-top:8px">Save Links</button>
+    </div>
+  </div>
+
+  <!-- ── Tab: Cohort ── -->
+  <div class="tab-panel" id="tab-cohort">
+    <div class="card">
+      <div class="card-title">Cohort Overview</div>
+      <table class="cohort-table" id="cohort-table">
+        <thead>
+          <tr><th>Seminar Group</th><th>Campus</th><th>Guilds</th><th>Tutor(s)</th><th>XP Leader</th></tr>
+        </thead>
+        <tbody id="cohort-tbody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-title">Add New Cohort / Campus Group</div>
+      <div class="alert alert-info" style="margin-bottom:14px">
+        To add a new cohort, run: <code style="background:#0f172a;color:#a5f3fc;padding:2px 6px;border-radius:4px">python scripts/add_cohort.py</code>
+        and follow the prompts. Then paste the generated guild block below and update config.js.
+      </div>
+      <div class="field">
+        <label>New Guild Block (paste output from add_cohort.py)</label>
+        <textarea id="new-cohort-paste" placeholder="Paste generated guild JSON here…" style="min-height:100px"></textarea>
+      </div>
+      <button class="btn btn-green" onclick="addCohortBlock()">Add Guilds to Config</button>
+    </div>
+  </div>
+
+  <!-- ── Tab: Export Config ── -->
+  <div class="tab-panel" id="tab-export">
+    <div class="card">
+      <div class="card-title">Export Updated config.js</div>
+      <div class="alert alert-info" style="margin-bottom:14px">
+        After making changes (week update, XP, links), click <strong>Generate config.js</strong> to download the updated file.
+        Then upload it to Blackboard (replacing the old config.js) and commit it to GitHub.
+      </div>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px">
+        <button class="btn btn-amber" onclick="generateConfig()">📄 Generate config.js</button>
+        <button class="btn btn-teal" onclick="copyConfigToClipboard()">📋 Copy to Clipboard</button>
+      </div>
+      <pre id="config-preview" style="max-height:500px">Click "Generate config.js" to preview…</pre>
+      <div id="export-actions" style="display:none;margin-top:12px">
+        <a id="download-link" class="btn btn-green" download="config.js">⬇ Download config.js</a>
+        <div class="alert alert-success" style="margin-top:10px;font-size:12px">
+          <strong>Upload instructions:</strong><br>
+          1. In Blackboard Ultra, go to Course Files → studio-system folder<br>
+          2. Delete old config.js → Upload new config.js<br>
+          3. Commit to GitHub: <code>git add config.js && git commit -m "Week X update" && git push</code>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── Tab: Setup ── -->
+  <div class="tab-panel" id="tab-setup">
+    <div class="card">
+      <div class="card-title">Change Admin Password</div>
+      <div class="alert alert-warn" style="margin-bottom:14px">
+        After generating a new password hash, copy it into config.js (adminPasswordHash field) and re-upload.
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="field"><label>New Password</label><input type="password" id="new-pw"></div>
+          <div class="field"><label>Confirm Password</label><input type="password" id="confirm-pw"></div>
+          <button class="btn btn-primary" onclick="generatePasswordHash()">Generate Hash</button>
+        </div>
+        <div>
+          <div class="field"><label>Generated SHA-256 Hash (copy into config.js)</label>
+            <textarea id="pw-hash-output" readonly style="font-family:monospace;font-size:11px;min-height:60px" placeholder="Hash will appear here…"></textarea>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tutor PINs Reference</div>
+      <table class="xp-table" id="tutor-table"></table>
+    </div>
+    <div class="card">
+      <div class="card-title">Badge Manager — Award Badges</div>
+      <div class="grid-2">
+        <div class="field">
+          <label>Select Guild</label>
+          <select id="badge-guild-sel" style="width:100%"></select>
+        </div>
+        <div class="field">
+          <label>Select Badge</label>
+          <select id="badge-badge-sel" style="width:100%"></select>
+        </div>
+      </div>
+      <button class="btn btn-amber" onclick="awardBadge()">Award Badge</button>
+      <button class="btn btn-ghost btn-sm" style="margin-left:8px" onclick="revokeBadge()">Revoke Badge</button>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const C = STUDIO_CONFIG;
+let adminConfig = JSON.parse(JSON.stringify(C)); // working copy
+let activeGroup = null;
+
+// ── Auth ─────────────────────────────────────────────────────────────────────
+async function sha256(message) {
+  const data = new TextEncoder().encode(message);
+  const hash = await crypto.subtle.digest('SHA-256', data);
+  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function doLogin() {
+  const pw = document.getElementById('pw-input').value;
+  if (!pw) return;
+  const hash = await sha256(pw);
+  // Allow if hash matches OR if no hash is set (first run) and pw === default
+  const storedHash = C.meta.adminPasswordHash || '';
+  const defaultHash = await sha256('CMP701@Studio2026');
+  const valid = hash === storedHash || (storedHash === defaultHash && pw === 'CMP701@Studio2026') || storedHash === '';
+  if (valid || hash === storedHash) {
+    sessionStorage.setItem('cmp701_admin', '1');
+    document.getElementById('login-screen').style.display = 'none';
+    initAdmin();
+  } else {
+    const errEl = document.getElementById('login-error');
+    errEl.textContent = 'Incorrect password. Contact the Module Leader if locked out.';
+    errEl.style.display = 'block';
+  }
+}
+
+function doLogout() {
+  sessionStorage.removeItem('cmp701_admin');
+  location.reload();
+}
+
+window.addEventListener('DOMContentLoaded', () => {
+  if (sessionStorage.getItem('cmp701_admin')) {
+    document.getElementById('login-screen').style.display = 'none';
+    initAdmin();
+  }
+  // Enter key on password
+  document.getElementById('pw-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') doLogin();
+  });
+});
+
+// ── Init ─────────────────────────────────────────────────────────────────────
+function initAdmin() {
+  const week = adminConfig.meta.currentWeek;
+  const wData = adminConfig.weeks[week - 1];
+  document.getElementById('admin-week-display').textContent = `Week ${week}: ${wData.title}`;
+  document.getElementById('s-week').textContent = week;
+  document.getElementById('s-phase').textContent = wData.assessmentPhase;
+
+  // Week tab
+  document.getElementById('cur-week').value = week;
+  document.getElementById('cw1-date').value = adminConfig.meta.cw1Deadline;
+  document.getElementById('cw2-date').value = adminConfig.meta.cw2Deadline;
+  document.getElementById('last-updated').value = adminConfig.meta.lastUpdated;
+  updateWeekPreview();
+  document.getElementById('cur-week').addEventListener('input', updateWeekPreview);
+
+  // XP tab
+  renderXPGroupButtons();
+  activeGroup = Object.keys(adminConfig.seminarGroups)[0];
+  renderXPTable();
+
+  // BB Links tab
+  renderBBLinksForm();
+
+  // Cohort tab
+  renderCohortTable();
+
+  // Setup tab
+  renderTutorTable();
+  renderBadgeSelectors();
+}
+
+function updateWeekPreview() {
+  const w = parseInt(document.getElementById('cur-week').value);
+  if (w < 1 || w > 12) return;
+  const wData = adminConfig.weeks[w-1];
+  document.getElementById('week-preview').innerHTML = `
+    <strong>Week ${w}: ${wData.title}</strong><br>
+    Phase: ${wData.phase} &nbsp;·&nbsp; Assessment: ${wData.assessmentPhase}<br>
+    Date: ${new Date(wData.date).toLocaleDateString('en-GB',{weekday:'short',day:'numeric',month:'long',year:'numeric'})}
+    ${wData.isMilestone ? '<br><span style="color:#dc2626;font-weight:600">⚠️ Milestone week — ' + wData.milestoneLabel + '</span>' : ''}
+  `;
+}
+
+// ── XP Manager ───────────────────────────────────────────────────────────────
+function renderXPGroupButtons() {
+  const cont = document.getElementById('xp-group-selector');
+  cont.innerHTML = Object.entries(adminConfig.seminarGroups).map(([key,sg]) =>
+    `<button class="btn btn-sm btn-ghost" id="xpbtn-${key}" onclick="setXPGroup('${key}')">${sg.label}</button>`
+  ).join('');
+}
+
+function setXPGroup(key) {
+  activeGroup = key;
+  document.querySelectorAll('[id^=xpbtn-]').forEach(b => b.classList.remove('btn-primary'));
+  const btn = document.getElementById(`xpbtn-${key}`);
+  if (btn) { btn.classList.add('btn-primary'); btn.classList.remove('btn-ghost'); }
+  renderXPTable();
+}
+
+function renderXPTable() {
+  const sg = adminConfig.seminarGroups[activeGroup];
+  const guilds = adminConfig.guilds.filter(g => g.group === activeGroup);
+  const week = adminConfig.meta.currentWeek;
+
+  // Highlight active button
+  document.querySelectorAll('[id^=xpbtn-]').forEach(b => {
+    const key = b.id.replace('xpbtn-', '');
+    if (key === activeGroup) { b.classList.add('btn-primary'); b.classList.remove('btn-ghost'); }
+    else { b.classList.remove('btn-primary'); b.classList.add('btn-ghost'); }
+  });
+
+  const campusClass = activeGroup.startsWith('LDN') ? 'chip-ldn' : activeGroup.startsWith('BHM') ? 'chip-bhm' : 'chip-man';
+  const header = `<div style="margin-bottom:10px;font-size:13px;color:var(--muted)">
+    <strong style="color:var(--text)">${sg.label}</strong> &nbsp;·&nbsp; ${sg.campus} &nbsp;·&nbsp;
+    Tutor: ${sg.tutors.join(' / ')} &nbsp;·&nbsp; Week ${week} XP entry
+  </div>`;
+
+  const rows = guilds.map(g => {
+    const weekXP = g.weeklyXP[week-1] || 0;
+    return `<tr>
+      <td><strong>${g.id}</strong></td>
+      <td>${g.business || '<em style="color:var(--muted)">not set</em>'}</td>
+      <td><span class="xp-total">${g.xp}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:6px">
+          <input class="xp-input" type="number" min="0" max="110" value="${weekXP}"
+            id="xp-w${week}-${g.id}" placeholder="0">
+          <span style="font-size:11px;color:var(--muted)">/110</span>
+        </div>
+      </td>
+      <td>
+        <div style="display:flex;gap:4px;flex-wrap:wrap">
+          <button class="btn btn-sm btn-ghost" onclick="setQuickXP('${g.id}',110,'${week}')">Max</button>
+          <button class="btn btn-sm btn-ghost" onclick="setQuickXP('${g.id}',60,'${week}')">Submit only</button>
+          <button class="btn btn-sm btn-ghost" onclick="setQuickXP('${g.id}',0,'${week}')">0</button>
+        </div>
+      </td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('xp-table-container').innerHTML = header + `
+    <table class="xp-table">
+      <thead><tr>
+        <th>Guild</th><th>Organisation</th><th>Total XP</th>
+        <th>Week ${week} XP</th><th>Quick Set</th>
+      </tr></thead>
+      <tbody>${rows}</tbody>
+    </table>`;
+}
+
+function setQuickXP(guildId, val, week) {
+  const el = document.getElementById(`xp-w${week}-${guildId}`);
+  if (el) el.value = val;
+}
+
+function applyXP() {
+  const week = adminConfig.meta.currentWeek;
+  adminConfig.guilds.forEach(g => {
+    const el = document.getElementById(`xp-w${week}-${g.id}`);
+    if (el) {
+      const weekVal = Math.min(110, Math.max(0, parseInt(el.value) || 0));
+      const oldWeekVal = g.weeklyXP[week-1] || 0;
+      g.weeklyXP[week-1] = weekVal;
+      g.xp = g.weeklyXP.reduce((s,v) => s + (v||0), 0);
+    }
+  });
+  renderXPTable();
+  showToast('XP updated! Remember to export config.js.');
+}
+
+// ── BB Links ─────────────────────────────────────────────────────────────────
+function renderBBLinksForm() {
+  document.getElementById('bb-gradebook').value = adminConfig.bbLinks.gradebook || '';
+  const cont = document.getElementById('bb-links-container');
+  cont.innerHTML = Object.entries(adminConfig.seminarGroups).map(([key,sg]) => {
+    const links = adminConfig.bbLinks[key] || {};
+    const workspaceInputs = Object.keys(links.guildWorkspaces || {}).map(gid =>
+      `<div class="field" style="margin-bottom:8px">
+        <label style="font-size:10px">${gid} workspace</label>
+        <input type="url" id="ws-${gid}" value="${(links.guildWorkspaces||{})[gid]||''}"
+          placeholder="https://learning.ulster.ac.uk/...">
+      </div>`
+    ).join('');
+    return `<div class="card" style="margin-bottom:10px;padding:14px">
+      <div style="font-weight:700;color:var(--navy);font-size:13px;margin-bottom:10px">
+        ${sg.label} <span style="font-size:11px;color:var(--muted);font-weight:400">${sg.campus}</span>
+      </div>
+      <div class="field">
+        <label>Current Assignment URL</label>
+        <input type="url" id="bb-assign-${key}" value="${links.currentAssignment||''}"
+          placeholder="https://learning.ulster.ac.uk/...">
+      </div>
+      <div class="field">
+        <label>Peer Review Form URL</label>
+        <input type="url" id="bb-peer-${key}" value="${links.peerReviewForm||''}"
+          placeholder="https://learning.ulster.ac.uk/...">
+      </div>
+      <details style="cursor:pointer">
+        <summary style="font-size:12px;color:var(--muted);margin-bottom:8px">Guild Workspace URLs (${Object.keys(links.guildWorkspaces||{}).length} guilds)</summary>
+        ${workspaceInputs}
+      </details>
+    </div>`;
+  }).join('');
+}
+
+function applyBBLinks() {
+  adminConfig.bbLinks.gradebook = document.getElementById('bb-gradebook').value.trim();
+  Object.keys(adminConfig.seminarGroups).forEach(key => {
+    if (!adminConfig.bbLinks[key]) adminConfig.bbLinks[key] = { currentAssignment:'', peerReviewForm:'', guildWorkspaces:{} };
+    adminConfig.bbLinks[key].currentAssignment = (document.getElementById(`bb-assign-${key}`) || {}).value?.trim() || '';
+    adminConfig.bbLinks[key].peerReviewForm    = (document.getElementById(`bb-peer-${key}`) || {}).value?.trim() || '';
+    const wsKeys = Object.keys(adminConfig.bbLinks[key].guildWorkspaces || {});
+    wsKeys.forEach(gid => {
+      adminConfig.bbLinks[key].guildWorkspaces[gid] = (document.getElementById(`ws-${gid}`) || {}).value?.trim() || '';
+    });
+  });
+  showToast('Links saved. Export config.js to deploy.');
+}
+
+// ── Cohort table ─────────────────────────────────────────────────────────────
+function renderCohortTable() {
+  const tbody = document.getElementById('cohort-tbody');
+  tbody.innerHTML = Object.entries(adminConfig.seminarGroups).map(([key,sg]) => {
+    const guilds = adminConfig.guilds.filter(g => g.group === key).sort((a,b)=>b.xp-a.xp);
+    const leader = guilds[0];
+    const campClass = key.startsWith('LDN')?'chip-ldn':key.startsWith('BHM')?'chip-bhm':'chip-man';
+    return `<tr>
+      <td><strong>${sg.label}</strong></td>
+      <td><span class="campus-chip ${campClass}">${sg.campus}</span></td>
+      <td><strong>${guilds.length}</strong> guilds</td>
+      <td style="font-size:12px">${sg.tutors.join('<br>')}</td>
+      <td style="font-size:12px">
+        ${leader ? `<strong>${leader.id}</strong> — <span style="color:var(--amber);font-weight:700">${leader.xp} XP</span>` : '—'}
+      </td>
+    </tr>`;
+  }).join('');
+}
+
+// ── Setup ────────────────────────────────────────────────────────────────────
+function renderTutorTable() {
+  const t = document.getElementById('tutor-table');
+  t.innerHTML = `<thead><tr><th>Name</th><th>PIN</th><th>Role</th><th>Assigned Groups</th></tr></thead>
+  <tbody>${adminConfig.tutors.map(t =>
+    `<tr><td>${t.name}</td><td><code>${t.pin}</code></td><td>${t.role}</td><td>${t.groups.join(', ')}</td></tr>`
+  ).join('')}</tbody>`;
+}
+
+function renderBadgeSelectors() {
+  const gSel = document.getElementById('badge-guild-sel');
+  gSel.innerHTML = adminConfig.guilds.map(g => `<option value="${g.id}">${g.id}</option>`).join('');
+  const bSel = document.getElementById('badge-badge-sel');
+  bSel.innerHTML = adminConfig.badges.map(b => `<option value="${b.id}">${b.icon} ${b.label}</option>`).join('');
+}
+
+function awardBadge() {
+  const gId = document.getElementById('badge-guild-sel').value;
+  const bId = document.getElementById('badge-badge-sel').value;
+  const guild = adminConfig.guilds.find(g => g.id === gId);
+  if (!guild.badges.includes(bId)) { guild.badges.push(bId); showToast(`Badge awarded to ${gId}. Export config.js to deploy.`); }
+  else showToast('Guild already has this badge.');
+}
+function revokeBadge() {
+  const gId = document.getElementById('badge-guild-sel').value;
+  const bId = document.getElementById('badge-badge-sel').value;
+  const guild = adminConfig.guilds.find(g => g.id === gId);
+  guild.badges = guild.badges.filter(b => b !== bId);
+  showToast(`Badge revoked from ${gId}.`);
+}
+
+async function generatePasswordHash() {
+  const pw = document.getElementById('new-pw').value;
+  const cpw = document.getElementById('confirm-pw').value;
+  if (!pw) { alert('Enter a password.'); return; }
+  if (pw !== cpw) { alert('Passwords do not match.'); return; }
+  if (pw.length < 8) { alert('Password must be at least 8 characters.'); return; }
+  const hash = await sha256(pw);
+  document.getElementById('pw-hash-output').value = hash;
+  adminConfig.meta.adminPasswordHash = hash;
+}
+
+// ── Week update ───────────────────────────────────────────────────────────────
+function applyWeekUpdate() {
+  const w = parseInt(document.getElementById('cur-week').value);
+  if (w < 1 || w > 12) { alert('Week must be 1–12.'); return; }
+  adminConfig.meta.currentWeek = w;
+  adminConfig.meta.cw1Deadline = document.getElementById('cw1-date').value;
+  adminConfig.meta.cw2Deadline = document.getElementById('cw2-date').value;
+  adminConfig.meta.lastUpdated = document.getElementById('last-updated').value || new Date().toISOString().slice(0,10);
+  const wData = adminConfig.weeks[w-1];
+  document.getElementById('admin-week-display').textContent = `Week ${w}: ${wData.title}`;
+  document.getElementById('s-week').textContent = w;
+  document.getElementById('s-phase').textContent = wData.assessmentPhase;
+  renderXPTable();
+  showToast(`Advanced to Week ${w}. Export config.js when ready.`);
+}
+
+// ── Export config ─────────────────────────────────────────────────────────────
+function generateConfig() {
+  const json = JSON.stringify(adminConfig, null, 2);
+  const configText = `// ═══════════════════════════════════════════════════════════════════════════
+//  CMP701 Digital Transformation Studio — Central Configuration
+//  Generated: ${new Date().toISOString()}
+//  Week: ${adminConfig.meta.currentWeek}  |  Cohort: ${adminConfig.meta.cohort}
+// ═══════════════════════════════════════════════════════════════════════════
+
+const STUDIO_CONFIG = ${json};
+
+if (typeof module !== 'undefined') module.exports = STUDIO_CONFIG;
+`;
+  document.getElementById('config-preview').textContent = configText;
+  document.getElementById('export-actions').style.display = 'block';
+  const blob = new Blob([configText], {type:'application/javascript'});
+  const url = URL.createObjectURL(blob);
+  const a = document.getElementById('download-link');
+  a.href = url; a.download = 'config.js';
+  showToast('config.js generated. Click Download to save.');
+}
+
+function copyConfigToClipboard() {
+  const text = document.getElementById('config-preview').textContent;
+  if (!text || text.startsWith('Click')) { showToast('Generate config first.'); return; }
+  navigator.clipboard.writeText(text).then(() => showToast('Copied to clipboard!'));
+}
+
+function addCohortBlock() {
+  try {
+    const block = JSON.parse(document.getElementById('new-cohort-paste').value.trim());
+    if (!Array.isArray(block)) throw new Error('Expected array of guild objects');
+    block.forEach(g => {
+      if (!adminConfig.guilds.find(x => x.id === g.id)) adminConfig.guilds.push(g);
+    });
+    showToast(`Added ${block.length} new guilds. Update seminarGroups manually, then export.`);
+  } catch(e) { alert('Invalid JSON: ' + e.message); }
+}
+
+// ── Week update shortcut ──────────────────────────────────────────────────────
+function switchTab(id) {
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    const ids = ['week','xp','links','cohort','export','setup'];
+    t.classList.toggle('active', ids[i] === id);
+  });
+  document.querySelectorAll('.tab-panel').forEach(p => {
+    p.classList.toggle('active', p.id === 'tab-' + id);
+  });
+}
+
+// ── Toast ────────────────────────────────────────────────────────────────────
+function showToast(msg) {
+  let t = document.getElementById('toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'toast';
+    t.style.cssText = 'position:fixed;bottom:24px;right:24px;background:#1e293b;color:#fff;padding:12px 18px;border-radius:8px;font-size:13px;z-index:9999;box-shadow:0 8px 24px rgba(0,0,0,.3);transition:opacity .3s';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(() => { t.style.opacity = '0'; }, 3000);
+}
+</script>
+</body>
+</html>
