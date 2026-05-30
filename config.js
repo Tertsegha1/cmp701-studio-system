@@ -27,13 +27,13 @@ const STUDIO_CONFIG = {
   // ── Tutor access (PIN-based) ─────────────────────────────────────────────
   // Each tutor sees only their assigned seminar groups.
   tutors: [
-    { name: "Tertsegha Anande",  pin: "TA2601", role: "moduleleader",  groups: ["BHM-A","BHM-B","BHM-E"] },
-    { name: "John Omokore",      pin: "JO2602", role: "tutor",  groups: ["LDN-A","LDN-CD"] },
-    { name: "Parvez Jugon",      pin: "PJ2603", role: "tutor",  groups: ["LDN-CD"] },
-    { name: "Goodluck Oguzie",   pin: "GO2604", role: "tutor",  groups: ["BHM-B"] },
-    { name: "Khadijah Hange",    pin: "KH2605", role: "tutor",  groups: ["BHM-E"] },
-    { name: "Amira Ahmed",       pin: "AA2606", role: "tutor",  groups: ["MAN-A"] },
-    { name: "Najm Us Sama",      pin: "NS2607", role: "tutor",  groups: ["MAN-BC"] },
+    { name: "Tertsegha Anande",  pin: "TA0701", role: "moduleleader",  groups: ["BHM-A","BHM-B","BHM-E"] },
+    { name: "John Omokore",      pin: "JO0701", role: "tutor",  groups: ["LDN-A","LDN-CD"] },
+    { name: "Parvez Jugon",      pin: "PJ0701", role: "tutor",  groups: ["LDN-CD"] },
+    { name: "Goodluck Oguzie",   pin: "GO0701", role: "tutor",  groups: ["BHM-B"] },
+    { name: "Khadijah Hange",    pin: "KH0701", role: "tutor",  groups: ["BHM-E"] },
+    { name: "Amira Ahmed",       pin: "AA0701", role: "tutor",  groups: ["MAN-A"] },
+    { name: "Najm Us Sama",      pin: "NS0701", role: "tutor",  groups: ["MAN-BC"] },
   ],
 
   // ── Seminar group definitions ────────────────────────────────────────────
