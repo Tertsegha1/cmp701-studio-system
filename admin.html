@@ -1690,25 +1690,30 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
 </div>
 
 <script>
-const C = STUDIO_CONFIG;
-let adminConfig = JSON.parse(JSON.stringify(C)); // working copy
+// adminConfig is initialised lazily inside initAdmin() to avoid
+// a large JSON.parse/stringify blocking the login screen.
+let adminConfig = null;
 let activeGroup = null;
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
 function doLogin() {
-  const pw = document.getElementById('pw-input').value.trim();
-  if (!pw) return;
-  const stored = (adminConfig && adminConfig.meta && adminConfig.meta.adminPassword)
-    || (C && C.meta && C.meta.adminPassword)
-    || 'CMP701@Studio2026';
-  if (pw === stored) {
-    sessionStorage.setItem('cmp701_admin', '1');
-    document.getElementById('login-screen').style.display = 'none';
-    initAdmin();
-  } else {
-    const errEl = document.getElementById('login-error');
-    errEl.style.cssText = 'display:block;background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;text-align:left';
-    errEl.textContent = 'Incorrect password. Contact the Module Leader if locked out.';
+  try {
+    const pw = (document.getElementById('pw-input').value || '').trim();
+    if (!pw) return;
+    // Read password directly from the global STUDIO_CONFIG — no deep-copy needed here
+    const stored = (window.STUDIO_CONFIG && window.STUDIO_CONFIG.meta && window.STUDIO_CONFIG.meta.adminPassword)
+      || 'CMP701@Studio2026';
+    if (pw === stored) {
+      sessionStorage.setItem('cmp701_admin', '1');
+      document.getElementById('login-screen').style.display = 'none';
+      initAdmin();
+    } else {
+      const errEl = document.getElementById('login-error');
+      errEl.style.cssText = 'display:block;background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;text-align:left';
+      errEl.textContent = 'Incorrect password. Contact the Module Leader if locked out.';
+    }
+  } catch(e) {
+    alert('Login error — please screenshot this and report it:\n' + e.message);
   }
 }
 
@@ -1730,6 +1735,10 @@ window.addEventListener('DOMContentLoaded', () => {
 
 // ── Init ─────────────────────────────────────────────────────────────────────
 function initAdmin() {
+  // Create deep working copy here (after login) so it never blocks the login screen
+  if (!adminConfig) {
+    adminConfig = JSON.parse(JSON.stringify(window.STUDIO_CONFIG));
+  }
   const week = adminConfig.meta.currentWeek;
   const wData = adminConfig.weeks[week - 1];
   document.getElementById('admin-week-display').textContent = `Week ${week}: ${wData.title}`;
