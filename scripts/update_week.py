@@ -7,14 +7,22 @@ Run each Monday morning before students arrive:
 import json, re, sys, os, datetime
 from pathlib import Path
 
-CONFIG_PATH = Path(__file__).parent.parent / "config.js"
+CONFIG_PATH  = Path(__file__).parent.parent / "config.js"
+STUDIO_DIR   = Path(__file__).parent.parent
+HTML_FILES   = ["index.html", "admin.html", "tutor.html"]
+PLACEHOLDER  = "<!-- CONFIG_PLACEHOLDER -->"
 
 def extract_config(js_text):
-    """Pull the JSON object out of the JS file."""
+    """Pull the JSON object out of the JS file, stripping JS-only syntax."""
     m = re.search(r'const STUDIO_CONFIG\s*=\s*(\{.*\})\s*;', js_text, re.DOTALL)
     if not m:
         raise ValueError("Could not find STUDIO_CONFIG in config.js")
-    return json.loads(m.group(1))
+    raw = m.group(1)
+    # Strip single-line // comments (but not URLs like https://)
+    raw = re.sub(r'(?<!:)//[^\n]*', '', raw)
+    # Strip trailing commas before } or ] (JS allows, JSON doesn't)
+    raw = re.sub(r',\s*([}\]])', r'\1', raw)
+    return json.loads(raw)
 
 def write_config(cfg, js_text):
     """Replace the STUDIO_CONFIG object in the JS file."""
@@ -188,14 +196,47 @@ def main():
         print(f"    {guild['id']:14} {guild['xp']:4} XP  {badges}")
 
     print()
-    save = prompt("Save changes to config.js? (Y/n)", default="y")
+    save = prompt("Save changes? (Y/n)", default="y")
     if save.lower() != 'n':
+        # 1. Write config.js (source of truth / GitHub backup)
         updated_js = write_config(cfg, js_text)
         CONFIG_PATH.write_text(updated_js, encoding='utf-8')
-        print(f"\n  ✓ config.js updated at {CONFIG_PATH}")
+        print(f"\n  ✓ config.js updated")
+
+        # 2. Embed config inline in all three HTML files (Blackboard-ready)
+        config_block = (
+            "<script>\n"
+            f"const STUDIO_CONFIG = {json.dumps(cfg, indent=2, ensure_ascii=False)};\n"
+            "if (typeof module !== 'undefined') module.exports = STUDIO_CONFIG;\n"
+            "</script>"
+        )
+        bundled = []
+        for fname in HTML_FILES:
+            fpath = STUDIO_DIR / fname
+            if not fpath.exists():
+                print(f"  ⚠ {fname} not found — skipping")
+                continue
+            html = fpath.read_text(encoding='utf-8')
+            if PLACEHOLDER in html:
+                html = html.replace(PLACEHOLDER, config_block)
+            elif '<script src="config.js"></script>' in html:
+                html = html.replace('<script src="config.js"></script>', config_block)
+            else:
+                # Config already inlined — replace the existing STUDIO_CONFIG block
+                html = re.sub(
+                    r'<script>\s*const STUDIO_CONFIG\s*=\s*\{.*?\};\s*(?:if \(typeof module[^<]*)?\s*</script>',
+                    config_block, html, flags=re.DOTALL
+                )
+            fpath.write_text(html, encoding='utf-8')
+            bundled.append(fname)
+
+        if bundled:
+            print(f"  ✓ Config embedded into: {', '.join(bundled)}")
+            print("    → These files are self-contained and ready to upload to Blackboard")
+
         print("\n  Next steps:")
-        print("  1. Upload config.js to Blackboard Course Files (replace old file)")
-        print("  2. Run: git add config.js && git commit -m 'Week update' && git push")
+        print("  1. Upload index.html (and admin/tutor if changed) to Blackboard Course Files")
+        print("  2. git add . && git commit -m 'Week update' && git push")
         print("  3. Verify the student dashboard shows the correct week\n")
     else:
         print("Changes discarded.")
