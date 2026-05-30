@@ -33,7 +33,7 @@ const STUDIO_CONFIG = {
     { name: "Goodluck Oguzie",   pin: "GO2604", role: "tutor",  groups: ["BHM-B"] },
     { name: "Khadijah Hange",    pin: "KH2605", role: "tutor",  groups: ["BHM-E"] },
     { name: "Amira Ahmed",       pin: "AA2606", role: "tutor",  groups: ["MAN-A"] },
-    { name: "Amjed Ibraheem",    pin: "AI2607", role: "tutor",  groups: ["MAN-BC"] },
+    { name: "Najm Us Sama",      pin: "NS2607", role: "tutor",  groups: ["MAN-BC"] },
   ],
 
   // ── Seminar group definitions ────────────────────────────────────────────
@@ -44,7 +44,7 @@ const STUDIO_CONFIG = {
     "BHM-B":  { label: "Birmingham Group B",   campus: "Birmingham", tutors: ["Goodluck Oguzie","Tertsegha Anande"],   color: "#0d7377", guildCount: 3 },
     "BHM-E":  { label: "Birmingham Group E",   campus: "Birmingham", tutors: ["Tertsegha Anande","Khadijah Hange"],    color: "#0d7377", guildCount: 4 },
     "MAN-A":  { label: "Manchester Group A",   campus: "Manchester", tutors: ["Amira Ahmed"],                          color: "#7c3aed", guildCount: 8 },
-    "MAN-BC": { label: "Manchester Group B&C", campus: "Manchester", tutors: ["Amjed Ibraheem"],                       color: "#7c3aed", guildCount: 3 },
+    "MAN-BC": { label: "Manchester Group B&C", campus: "Manchester", tutors: ["Najm Us Sama"],                         color: "#7c3aed", guildCount: 3 },
   },
 
   // ── All 33 Guilds ────────────────────────────────────────────────────────
