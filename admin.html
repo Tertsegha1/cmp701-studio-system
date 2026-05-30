@@ -16,7 +16,7 @@ const STUDIO_CONFIG = {
     "currentWeek": 1,
     "cw1Deadline": "2026-07-03",
     "cw2Deadline": "2026-08-21",
-    "adminPasswordHash": "f11ce10ffee6942811d7238d40f23e807adbf68cce93c2048f30915769297277",
+    "adminPassword": "CMP701@Studio2026",
     "version": "1.0.0",
     "lastUpdated": "2026-06-01"
   },
@@ -1651,17 +1651,17 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
     <div class="card">
       <div class="card-title">Change Admin Password</div>
       <div class="alert alert-warn" style="margin-bottom:14px">
-        After generating a new password hash, copy it into config.js (adminPasswordHash field) and re-upload.
+        Set a new admin password below. Then click Export &rarr; Generate Blackboard Bundle and re-upload admin.html.
       </div>
       <div class="grid-2">
         <div>
           <div class="field"><label>New Password</label><input type="password" id="new-pw"></div>
           <div class="field"><label>Confirm Password</label><input type="password" id="confirm-pw"></div>
-          <button class="btn btn-primary" onclick="generatePasswordHash()">Generate Hash</button>
+          <button class="btn btn-primary" onclick="generatePasswordHash()">Set Password</button>
         </div>
         <div>
-          <div class="field"><label>Generated SHA-256 Hash (copy into config.js)</label>
-            <textarea id="pw-hash-output" readonly style="font-family:monospace;font-size:11px;min-height:60px" placeholder="Hash will appear here…"></textarea>
+          <div class="field"><label>New password (saved into config on export)</label>
+            <textarea id="pw-hash-output" readonly style="font-family:monospace;font-size:11px;min-height:60px" placeholder="Your new password will appear here…"></textarea>
           </div>
         </div>
       </div>
@@ -1695,28 +1695,20 @@ let adminConfig = JSON.parse(JSON.stringify(C)); // working copy
 let activeGroup = null;
 
 // ── Auth ─────────────────────────────────────────────────────────────────────
-async function sha256(message) {
-  const data = new TextEncoder().encode(message);
-  const hash = await crypto.subtle.digest('SHA-256', data);
-  return Array.from(new Uint8Array(hash)).map(b => b.toString(16).padStart(2,'0')).join('');
-}
-
-async function doLogin() {
-  const pw = document.getElementById('pw-input').value;
+function doLogin() {
+  const pw = document.getElementById('pw-input').value.trim();
   if (!pw) return;
-  const hash = await sha256(pw);
-  // Allow if hash matches OR if no hash is set (first run) and pw === default
-  const storedHash = C.meta.adminPasswordHash || '';
-  const defaultHash = await sha256('CMP701@Studio2026');
-  const valid = hash === storedHash || (storedHash === defaultHash && pw === 'CMP701@Studio2026') || storedHash === '';
-  if (valid || hash === storedHash) {
+  const stored = (adminConfig && adminConfig.meta && adminConfig.meta.adminPassword)
+    || (C && C.meta && C.meta.adminPassword)
+    || 'CMP701@Studio2026';
+  if (pw === stored) {
     sessionStorage.setItem('cmp701_admin', '1');
     document.getElementById('login-screen').style.display = 'none';
     initAdmin();
   } else {
     const errEl = document.getElementById('login-error');
+    errEl.style.cssText = 'display:block;background:#fee2e2;border:1px solid #fca5a5;color:#7f1d1d;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;text-align:left';
     errEl.textContent = 'Incorrect password. Contact the Module Leader if locked out.';
-    errEl.style.display = 'block';
   }
 }
 
@@ -1966,15 +1958,15 @@ function revokeBadge() {
   showToast(`Badge revoked from ${gId}.`);
 }
 
-async function generatePasswordHash() {
+function generatePasswordHash() {
   const pw = document.getElementById('new-pw').value;
   const cpw = document.getElementById('confirm-pw').value;
   if (!pw) { alert('Enter a password.'); return; }
   if (pw !== cpw) { alert('Passwords do not match.'); return; }
   if (pw.length < 8) { alert('Password must be at least 8 characters.'); return; }
-  const hash = await sha256(pw);
-  document.getElementById('pw-hash-output').value = hash;
-  adminConfig.meta.adminPasswordHash = hash;
+  document.getElementById('pw-hash-output').value = pw;
+  if (adminConfig && adminConfig.meta) adminConfig.meta.adminPassword = pw;
+  showToast('Password set. Export Blackboard Bundle to deploy.');
 }
 
 // ── Week update ───────────────────────────────────────────────────────────────
@@ -2015,7 +2007,7 @@ const STUDIO_CONFIG = {
     "currentWeek": 1,
     "cw1Deadline": "2026-07-03",
     "cw2Deadline": "2026-08-21",
-    "adminPasswordHash": "f11ce10ffee6942811d7238d40f23e807adbf68cce93c2048f30915769297277",
+    "adminPassword": "CMP701@Studio2026",
     "version": "1.0.0",
     "lastUpdated": "2026-06-01"
   },
