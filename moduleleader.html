@@ -1278,6 +1278,70 @@ const STUDIO_CONFIG = {
       "milestoneLabel": "CW2 Due"
     }
   ],
+  "guildContract": "As a member of this guild, I commit to: attending all studio sessions and contributing actively; sharing the workload equally across all 12 weekly deliverables; giving honest, constructive, and respectful peer feedback; maintaining full academic integrity in every submission; communicating openly with my guild if I am struggling; and supporting every guild member throughout our 12-week transformation journey. Our collective XP reflects our collective effort.",
+  "announcements": [],
+  "assessmentCriteria": {
+    "cw1": [
+      {
+        "criterion": "Content Understanding",
+        "marks": 25,
+        "desc": "Demonstrates clear understanding of the assignment task and outlines a coherent plan for the final report"
+      },
+      {
+        "criterion": "Clarity & Engagement",
+        "marks": 20,
+        "desc": "Logical flow, confident delivery, and ability to engage the audience throughout the presentation"
+      },
+      {
+        "criterion": "Structure & Organisation",
+        "marks": 20,
+        "desc": "Well-structured outline covering introduction, literature review, methodology, and planned artefacts"
+      },
+      {
+        "criterion": "Visual Aids",
+        "marks": 20,
+        "desc": "Professional, relevant slides or visuals that support and enhance the verbal narrative"
+      },
+      {
+        "criterion": "Delivery & Time Management",
+        "marks": 15,
+        "desc": "Delivered within the 7-8 minute limit with clear verbal communication and appropriate pace"
+      }
+    ],
+    "cw2": [
+      {
+        "criterion": "Introduction & Content Understanding",
+        "marks": 15,
+        "desc": "Clear business overview, current digital state analysis, and accurate reflection of CW1 feedback"
+      },
+      {
+        "criterion": "Critical Analysis",
+        "marks": 20,
+        "desc": "Evidence-based, theoretically grounded analysis of digital disruption, industry dynamics, and organisational readiness"
+      },
+      {
+        "criterion": "Digital Transformation Strategy",
+        "marks": 20,
+        "desc": "Coherent, feasible, and well-justified transformation strategy with technologies, roadmap, and KPIs"
+      },
+      {
+        "criterion": "Documentation & Structure",
+        "marks": 15,
+        "desc": "Well-structured 3000-word report with logical flow, clear headings, and professional presentation"
+      },
+      {
+        "criterion": "Evidence & Literature",
+        "marks": 15,
+        "desc": "Minimum 12 academic sources in IEEE format; evidence appropriately integrated throughout"
+      },
+      {
+        "criterion": "Artefacts Presentation & Communication",
+        "marks": 15,
+        "desc": "Professional quality of all artefacts, visuals, and written communication across the report"
+      }
+    ]
+  },
+  "aiEnabled": true,
   "bbLinks": {
     "gradebook": "",
     "peerRotationOffset": {
@@ -1482,6 +1546,7 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
     <div class="tab" onclick="switchTab('links')">🔗 BB Links</div>
     <div class="tab" onclick="switchTab('cohort')">👥 Cohort</div>
     <div class="tab" onclick="switchTab('export')">📤 Export Config</div>
+    <div class="tab" onclick="switchTab('announce')">📢 Announcements</div>
     <div class="tab" onclick="switchTab('setup')">⚙️ Setup</div>
   </div>
 
@@ -1628,6 +1693,42 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
 
   </div>
 
+
+  <!-- ── Tab: Announcements ── -->
+  <div class="tab-panel" id="tab-announce">
+    <div class="card">
+      <div class="card-title">Post Announcement to Students</div>
+      <div class="alert alert-info" style="margin-bottom:14px">
+        Announcements appear at the top of the student dashboard. Update config.js and re-upload to publish.
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="field"><label>Title</label><input type="text" id="ann-title" placeholder="e.g. Week 2 Now Live!"></div>
+          <div class="field"><label>Message</label><textarea id="ann-msg" style="min-height:80px" placeholder="Write your announcement…"></textarea></div>
+          <div class="field">
+            <label>Type</label>
+            <select id="ann-type">
+              <option value="info">ℹ Info</option>
+              <option value="good">✅ Good News</option>
+              <option value="warn">⚠ Important</option>
+              <option value="urgent">🔴 Urgent</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Pin to top?</label>
+            <select id="ann-pin"><option value="false">No</option><option value="true">Yes — show at top</option></select>
+          </div>
+          <button class="btn btn-primary" onclick="addAnnouncement()">📢 Add Announcement</button>
+        </div>
+        <div>
+          <div style="font-size:12px;font-weight:700;color:var(--navy);text-transform:uppercase;letter-spacing:.5px;margin-bottom:10px">Current Announcements</div>
+          <div id="ann-list" style="font-size:13px;color:var(--muted)">Loading…</div>
+          <button class="btn btn-ghost btn-sm" style="margin-top:10px" onclick="clearAllAnnouncements()">Clear All</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ── Tab: Setup ── -->
   <div class="tab-panel" id="tab-setup">
     <div class="card">
@@ -1648,6 +1749,30 @@ pre{background:#0f172a;color:#e2e8f0;padding:16px;border-radius:8px;font-size:11
         </div>
       </div>
     </div>
+
+    <div class="card">
+      <div class="card-title">AI Formative Feedback — API Key</div>
+      <div class="alert alert-warn" style="margin-bottom:14px">
+        The API key is stored in <strong>browser localStorage only</strong> — it is never embedded in config.js or uploaded to Blackboard. Each device where you want AI feedback to work needs the key set here.
+      </div>
+      <div class="grid-2">
+        <div>
+          <div class="field"><label>Anthropic API Key</label><input type="password" id="ai-key-input" placeholder="sk-ant-…"></div>
+          <div style="display:flex;gap:8px">
+            <button class="btn btn-primary" onclick="saveAIKey()">Save API Key</button>
+            <button class="btn btn-ghost" onclick="clearAIKey()">Clear Key</button>
+          </div>
+          <div id="ai-key-status" style="font-size:12px;color:var(--muted);margin-top:8px"></div>
+        </div>
+        <div style="font-size:12px;color:var(--muted);line-height:1.6">
+          <strong style="color:var(--text)">How AI feedback works:</strong><br>
+          Students paste their work into the AI Feedback tab → get instant formative feedback aligned to CW1/CW2 criteria.<br><br>
+          Without an API key, students still get a <strong>copy-to-Claude.ai prompt</strong> which works in any browser.<br><br>
+          Get an API key at <strong>console.anthropic.com</strong>
+        </div>
+      </div>
+    </div>
+
     <div class="card">
       <div class="card-title">Tutor PINs Reference</div>
       <table class="xp-table" id="tutor-table"></table>
@@ -1717,6 +1842,10 @@ function initAdmin() {
   // Setup tab
   renderTutorTable();
   renderBadgeSelectors();
+  renderAnnList();
+  // Show saved AI key status
+  const aiKeyStatus = document.getElementById('ai-key-status');
+  if (aiKeyStatus) aiKeyStatus.textContent = localStorage.getItem('cmp701_ai_key') ? 'API key is configured on this device.' : 'No API key set — AI feedback uses prompt-copy mode.';
 }
 
 function updateWeekPreview() {
@@ -3228,6 +3357,70 @@ const STUDIO_CONFIG = {
       "milestoneLabel": "CW2 Due"
     }
   ],
+  "guildContract": "As a member of this guild, I commit to: attending all studio sessions and contributing actively; sharing the workload equally across all 12 weekly deliverables; giving honest, constructive, and respectful peer feedback; maintaining full academic integrity in every submission; communicating openly with my guild if I am struggling; and supporting every guild member throughout our 12-week transformation journey. Our collective XP reflects our collective effort.",
+  "announcements": [],
+  "assessmentCriteria": {
+    "cw1": [
+      {
+        "criterion": "Content Understanding",
+        "marks": 25,
+        "desc": "Demonstrates clear understanding of the assignment task and outlines a coherent plan for the final report"
+      },
+      {
+        "criterion": "Clarity & Engagement",
+        "marks": 20,
+        "desc": "Logical flow, confident delivery, and ability to engage the audience throughout the presentation"
+      },
+      {
+        "criterion": "Structure & Organisation",
+        "marks": 20,
+        "desc": "Well-structured outline covering introduction, literature review, methodology, and planned artefacts"
+      },
+      {
+        "criterion": "Visual Aids",
+        "marks": 20,
+        "desc": "Professional, relevant slides or visuals that support and enhance the verbal narrative"
+      },
+      {
+        "criterion": "Delivery & Time Management",
+        "marks": 15,
+        "desc": "Delivered within the 7-8 minute limit with clear verbal communication and appropriate pace"
+      }
+    ],
+    "cw2": [
+      {
+        "criterion": "Introduction & Content Understanding",
+        "marks": 15,
+        "desc": "Clear business overview, current digital state analysis, and accurate reflection of CW1 feedback"
+      },
+      {
+        "criterion": "Critical Analysis",
+        "marks": 20,
+        "desc": "Evidence-based, theoretically grounded analysis of digital disruption, industry dynamics, and organisational readiness"
+      },
+      {
+        "criterion": "Digital Transformation Strategy",
+        "marks": 20,
+        "desc": "Coherent, feasible, and well-justified transformation strategy with technologies, roadmap, and KPIs"
+      },
+      {
+        "criterion": "Documentation & Structure",
+        "marks": 15,
+        "desc": "Well-structured 3000-word report with logical flow, clear headings, and professional presentation"
+      },
+      {
+        "criterion": "Evidence & Literature",
+        "marks": 15,
+        "desc": "Minimum 12 academic sources in IEEE format; evidence appropriately integrated throughout"
+      },
+      {
+        "criterion": "Artefacts Presentation & Communication",
+        "marks": 15,
+        "desc": "Professional quality of all artefacts, visuals, and written communication across the report"
+      }
+    ]
+  },
+  "aiEnabled": true,
   "bbLinks": {
     "gradebook": "",
     "peerRotationOffset": {
@@ -3399,12 +3592,75 @@ function addCohortBlock() {
 // ── Week update shortcut ──────────────────────────────────────────────────────
 function switchTab(id) {
   document.querySelectorAll('.tab').forEach((t,i) => {
-    const ids = ['week','xp','links','cohort','export','setup'];
+    const ids = ['week','xp','links','cohort','export','announce','setup'];
     t.classList.toggle('active', ids[i] === id);
   });
   document.querySelectorAll('.tab-panel').forEach(p => {
     p.classList.toggle('active', p.id === 'tab-' + id);
   });
+}
+
+
+// ── Announcements ────────────────────────────────────────────────────────────
+function renderAnnList() {
+  const el = document.getElementById('ann-list');
+  if (!el) return;
+  const items = (mlConfig && mlConfig.announcements) ? mlConfig.announcements : (window.STUDIO_CONFIG.announcements || []);
+  if (!items.length) { el.innerHTML = '<em>No announcements yet</em>'; return; }
+  const typeIcon = { info:'ℹ️', warn:'⚠️', good:'✅', urgent:'🔴' };
+  el.innerHTML = items.map((a,i) => `
+    <div style="display:flex;align-items:flex-start;gap:8px;padding:8px 0;border-bottom:1px solid var(--border)">
+      <span>${typeIcon[a.type]||'ℹ️'}</span>
+      <div style="flex:1"><strong>${a.title}</strong>${a.pinned?'  📌':''}
+        <div style="font-size:11px;color:var(--muted)">${a.message.slice(0,80)}${a.message.length>80?'…':''}</div>
+      </div>
+      <button class="btn btn-ghost btn-sm" onclick="deleteAnnouncement(${i})" style="padding:3px 8px;font-size:11px">✕</button>
+    </div>`).join('');
+}
+function addAnnouncement() {
+  const title = (document.getElementById('ann-title')||{}).value?.trim();
+  const msg   = (document.getElementById('ann-msg')||{}).value?.trim();
+  if (!title || !msg) { showToast('Enter a title and message.'); return; }
+  if (!mlConfig) mlConfig = JSON.parse(JSON.stringify(window.STUDIO_CONFIG));
+  if (!mlConfig.announcements) mlConfig.announcements = [];
+  mlConfig.announcements.push({
+    id: Date.now(), title, message: msg,
+    type: (document.getElementById('ann-type')||{}).value || 'info',
+    pinned: (document.getElementById('ann-pin')||{}).value === 'true',
+    date: new Date().toLocaleDateString('en-GB',{day:'numeric',month:'short',year:'numeric'}),
+  });
+  document.getElementById('ann-title').value = '';
+  document.getElementById('ann-msg').value = '';
+  renderAnnList();
+  showToast('Announcement added. Export config to deploy.');
+}
+function deleteAnnouncement(idx) {
+  if (!mlConfig || !mlConfig.announcements) return;
+  mlConfig.announcements.splice(idx, 1);
+  renderAnnList();
+  showToast('Announcement removed. Export config to deploy.');
+}
+function clearAllAnnouncements() {
+  if (!mlConfig) return;
+  mlConfig.announcements = [];
+  renderAnnList();
+  showToast('All announcements cleared.');
+}
+
+// ── AI Key ────────────────────────────────────────────────────────────────────
+function saveAIKey() {
+  const key = (document.getElementById('ai-key-input')||{}).value?.trim();
+  if (!key || !key.startsWith('sk-')) { showToast('Enter a valid Anthropic API key (starts with sk-).'); return; }
+  localStorage.setItem('cmp701_ai_key', key);
+  document.getElementById('ai-key-status').textContent = 'API key saved to this browser. AI feedback now active.';
+  document.getElementById('ai-key-input').value = '';
+  showToast('API key saved.');
+}
+function clearAIKey() {
+  localStorage.removeItem('cmp701_ai_key');
+  const el = document.getElementById('ai-key-status');
+  if (el) el.textContent = 'API key cleared.';
+  showToast('API key cleared.');
 }
 
 // ── Toast ────────────────────────────────────────────────────────────────────
