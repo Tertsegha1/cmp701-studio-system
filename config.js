@@ -27,7 +27,7 @@ const STUDIO_CONFIG = {
   // ── Tutor access (PIN-based) ─────────────────────────────────────────────
   // Each tutor sees only their assigned seminar groups.
   tutors: [
-    { name: "Tertsegha Anande",  pin: "TA0701", role: "moduleleader",  groups: ["BHM-A","BHM-B","BHM-E"] },
+    { name: "Tertsegha Anande",  pin: "MLP0701", role: "moduleleader",  groups: ["BHM-A","BHM-B","BHM-E"] },
     { name: "John Omokore",      pin: "JO0701", role: "tutor",  groups: ["LDN-A","LDN-CD"] },
     { name: "Parvez Jugon",      pin: "PJ0701", role: "tutor",  groups: ["LDN-CD"] },
     { name: "Goodluck Oguzie",   pin: "GO0701", role: "tutor",  groups: ["BHM-B"] },

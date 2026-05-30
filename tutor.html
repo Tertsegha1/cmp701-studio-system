@@ -23,7 +23,7 @@ const STUDIO_CONFIG = {
   "tutors": [
     {
       "name": "Tertsegha Anande",
-      "pin": "TA0701",
+      "pin": "MLP0701",
       "role": "moduleleader",
       "groups": [
         "BHM-A",
@@ -1534,6 +1534,10 @@ function mlSignIn() {
   if (tutor) {
     currentTutor = tutor;
     sessionStorage.setItem('cmp701_tutor', JSON.stringify(tutor));
+    if (tutor.role === 'moduleleader') {
+      window.location.href = 'moduleleader.html';
+      return;
+    }
     document.getElementById('ml-screen').style.display = 'none';
     initTutor();
   } else {
