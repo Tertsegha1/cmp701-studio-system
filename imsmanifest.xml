@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<manifest identifier="cmp701-digital-transformation-studio-jun2026"
+  version="1.0"
+  xmlns="http://www.imsproject.org/xsd/imscp_rootv1p1p2"
+  xmlns:adlcp="http://www.adlnet.org/xsd/adlcp_rootv1p2"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="
+    http://www.imsproject.org/xsd/imscp_rootv1p1p2 imscp_rootv1p1p2.xsd
+    http://www.adlnet.org/xsd/adlcp_rootv1p2 adlcp_rootv1p2.xsd">
+
+  <metadata>
+    <schema>ADL SCORM</schema>
+    <schemaversion>1.2</schemaversion>
+  </metadata>
+
+  <organizations default="CMP701_Studio_Org">
+    <organization identifier="CMP701_Studio_Org">
+      <title>CMP701 Digital Transformation Studio — Jun 2026</title>
+
+      <item identifier="item_dashboard" identifierref="res_dashboard">
+        <title>Studio Dashboard (Student View)</title>
+      </item>
+
+      <item identifier="item_tutor" identifierref="res_tutor">
+        <title>Tutor View (Staff Only)</title>
+      </item>
+
+      <item identifier="item_admin" identifierref="res_admin">
+        <title>Admin Panel (Module Leader Only)</title>
+      </item>
+
+    </organization>
+  </organizations>
+
+  <resources>
+
+    <resource identifier="res_dashboard"
+              type="webcontent"
+              adlcp:scormtype="asset"
+              href="index.html">
+      <file href="index.html"/>
+    </resource>
+
+    <resource identifier="res_tutor"
+              type="webcontent"
+              adlcp:scormtype="asset"
+              href="tutor.html">
+      <file href="tutor.html"/>
+    </resource>
+
+    <resource identifier="res_admin"
+              type="webcontent"
+              adlcp:scormtype="asset"
+              href="admin.html">
+      <file href="admin.html"/>
+    </resource>
+
+  </resources>
+
+</manifest>

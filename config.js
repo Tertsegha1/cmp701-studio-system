@@ -19,7 +19,7 @@ const STUDIO_CONFIG = {
     cw2Deadline: "2026-08-21",   // Friday end of Week 12 — confirm with registry
     // SHA-256 hash of admin password. Default: CMP701@Studio2026
     // Run admin.html > Setup tab to generate a new hash after changing password.
-    adminPasswordHash: "e9c4b96b7a9e4d3e3fa1c7e6c3a5b8d2f0e1c4a7b6e3d9f2a5c8b1e4d7f0a3c6",
+    adminPasswordHash: "f11ce10ffee6942811d7238d40f23e807adbf68cce93c2048f30915769297277",
     version: "1.0.0",
     lastUpdated: "2026-06-01",
   },
